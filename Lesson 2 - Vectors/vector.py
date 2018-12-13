@@ -1,3 +1,6 @@
+import math
+
+
 class Vector(object):
     def __init__(self, coordinates):
         try:
@@ -12,6 +15,18 @@ class Vector(object):
 
         except TypeError:
             raise TypeError('The coordinates must be an iterable')
+
+    def dot_product(self, other):
+        y = 0
+        for i in range(self.dimension):
+            y += self.coordinates[i] * other.coordinates[i]
+        return y
+
+    def get_angle(self, other):
+        dot_product = self.dot_product(other)
+        mag_1 = self.get_mag()
+        mag_2 = other.get_mag()
+        return math.acos(dot_product / (mag_1 * mag_2))
 
     def scalar_mult(self, c):
         x = []
@@ -61,3 +76,18 @@ class Vector(object):
         for i in range(self.dimension):
             rounded.append(round(self.coordinates[i], n))
         return Vector(rounded)
+
+
+def test():
+    vector_1 = Vector([1, 2, -1])
+    vector_2 = Vector([3, 1, 0])
+
+    # test for Vector.dot_product() method
+    print(vector_1.dot_product(vector_2))
+
+    # test for Vector.get_angle() method
+    print((vector_1.get_angle(vector_2)))
+
+
+if __name__ == '__main__':
+    test()
