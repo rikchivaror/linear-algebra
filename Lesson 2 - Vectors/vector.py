@@ -26,7 +26,12 @@ class Vector(object):
         dot_product = self.dot_product(other)
         mag_1 = self.get_mag()
         mag_2 = other.get_mag()
-        return math.acos(dot_product / (mag_1 * mag_2))
+
+        try:
+            return math.acos(dot_product / (mag_1 * mag_2))
+
+        except ZeroDivisionError:
+            raise Exception("Cannot compute an angle with the zero vector")
 
     def scalar_mult(self, c):
         x = []
@@ -81,12 +86,16 @@ class Vector(object):
 def test():
     vector_1 = Vector([1, 2, -1])
     vector_2 = Vector([3, 1, 0])
+    vector_3 = vector_2.scalar_mult(math.pi)
+    vector_4 = Vector([0, 0, 0])
 
     # test for Vector.dot_product() method
     print(vector_1.dot_product(vector_2))
 
     # test for Vector.get_angle() method
     print((vector_1.get_angle(vector_2)))
+    print((vector_2.get_angle(vector_3)))
+    print((vector_1.get_angle(vector_4)))
 
 
 if __name__ == '__main__':
