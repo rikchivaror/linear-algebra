@@ -16,6 +16,31 @@ class Vector(object):
         except TypeError:
             raise TypeError('The coordinates must be an iterable')
 
+    # -----------------------------------------------------------------------------
+    # is_parallel(self, other):
+    #   Determine if two vectors are parallel. They are parallel of is a scalar
+    #   multiple of the other or if at least one vector is the zero vector.
+    #
+    # Arguments:
+    #   self, other: objects of the Vector class
+    #
+    # Returns:
+    #   the 'bool' type based on whether the vectors are parallel or not
+    def is_parallel(self, other):
+        if self.is_zero() or other.is_zero():
+            return True
+        c = other.coordinates[0] / self.coordinates[0]
+        return self.scalar_mult(c) == other
+
+    def is_ortho(self, other):
+        pass
+
+    def is_zero(self):
+        for e in self.coordinates:
+            if e:
+                return False
+        return True
+
     def dot_product(self, other):
         y = 0
         for i in range(self.dimension):
@@ -89,13 +114,27 @@ def test():
     vector_3 = vector_2.scalar_mult(math.pi)
     vector_4 = Vector([0, 0, 0])
 
-    # test for Vector.dot_product() method
+    # test for __eq__() method
+    print(vector_1 == vector_2)
+
+    # test is_zero() method
+    print(vector_1.is_zero())
+    print(vector_4.is_zero())
+
+    # test for dot_product() method
     print(vector_1.dot_product(vector_2))
 
-    # test for Vector.get_angle() method
+    # test for .get_angle() method
     print((vector_1.get_angle(vector_2)))
     print((vector_2.get_angle(vector_3)))
-    print((vector_1.get_angle(vector_4)))
+    # print((vector_1.get_angle(vector_4)))
+
+    # test for is_parallel() method
+    print(vector_1.is_parallel(vector_2))
+    print(vector_2.is_parallel(vector_3))
+    print(vector_3.is_parallel(vector_2))
+    print(vector_3.is_parallel(vector_4))
+    print(vector_4.is_parallel(vector_3))
 
 
 if __name__ == '__main__':
