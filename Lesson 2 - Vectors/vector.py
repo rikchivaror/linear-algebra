@@ -23,10 +23,9 @@ class Vector(object):
         return y
 
     def get_angle(self, other):
-        dot_product = self.dot_product(other)
-        mag_1 = self.get_mag()
-        mag_2 = other.get_mag()
-        return math.acos(dot_product / (mag_1 * mag_2))
+        u1 = self.normalize()
+        u2 = other.normalize()
+        return math.acos(u1.dot_product(u2))
 
     def scalar_mult(self, c):
         x = []
@@ -40,7 +39,7 @@ class Vector(object):
             x += e ** 2
         return x ** 0.5
 
-    def get_unit_vec(self):
+    def normalize(self):
         try:
             return self.scalar_mult(1/self.get_mag())
 
@@ -79,15 +78,26 @@ class Vector(object):
 
 
 def test():
-    vector_1 = Vector([1, 2, -1])
-    vector_2 = Vector([3, 1, 0])
+    v1 = Vector([1, 2, -1])
+    v2 = Vector([3, 1, 0])
+    v3 = Vector([-7.579, -7.88])
+    v4 = Vector([22.64, 23.64])
+    v5 = Vector([-2.029, 9.97, 4.172])
+    v6 = Vector([-9.231, -6.639, -7.245])
+    v7 = Vector([-2.328, -7.284, -1.214])
+    v8 = Vector([-1.821, 1.072, -2.94])
+
 
     # test for Vector.dot_product() method
-    print(vector_1.dot_product(vector_2))
+    print(v3.dot_product(v4))
+    print(v5.dot_product(v6))
+    print(v7.dot_product(v8))
 
     # test for Vector.get_angle() method
-    print((vector_1.get_angle(vector_2)))
-
+    # print(math.degrees((v1.get_angle(v2))))
+    print(math.degrees((v3.get_angle(v4))))
+    print(math.degrees((v5.get_angle(v6))))
+    print(math.degrees((v7.get_angle(v8))))
 
 if __name__ == '__main__':
     test()
