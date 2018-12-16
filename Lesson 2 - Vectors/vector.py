@@ -1,4 +1,7 @@
 import math
+from decimal import Decimal, getcontext
+
+getcontext().prec = 30
 
 
 class Vector(object):
@@ -7,7 +10,7 @@ class Vector(object):
             if not coordinates:
                 raise ValueError
 
-            self.coordinates = tuple(coordinates)
+            self.coordinates = tuple(Decimal(x) for x in coordinates)
             self.dimension = len(coordinates)
 
         except ValueError:
@@ -17,44 +20,48 @@ class Vector(object):
             raise TypeError('The coordinates must be an iterable')
 
     # -----------------------------------------------------------------------------
-    # is_parallel(self, other):
-    #   Determine if two vectors are parallel. They are parallel of is a scalar
-    #   multiple of the other or if at least one vector is the zero vector.
-    #
-    # Arguments:
-    #   self, other: objects of the Vector class
-    #
-    # Returns:
-    #   the 'bool' type based on whether the vectors are parallel or not
-    def is_parallel(self, other):
-        if self.is_zero() or other.is_zero():
-            return True
-
-        self_unit_vec = round(self.get_unit_vec(), 3)
-        other_unit_vec = round(other.get_unit_vec(), 3)
-
-        return self_unit_vec == other_unit_vec or self_unit_vec == other_unit_vec.scalar_mult(-1)
-
-    def is_zero(self):
-        for e in self.coordinates:
-            if e:
-                return False
-        return True
-
-    # -----------------------------------------------------------------------------
     # is_ortho(self, other):
     #   Determine if two vectors are orthogonal. The vectors are orthogonal if the
-    #   dot products of the vectors is zero.
+    #   dot products of the vectors is close to (within epsilon of) zero.
     #
     # Arguments:
-    #   self, other: objects of the Vector class
+    #   self, other: Vector objects
+    #   epsilon: allowable tolerance between the result and value of zero
     #
     # Returns:
     #   the 'bool' type based on whether the vectors are orthogonal or not
-    def is_ortho(self, other):
-        if round(self.dot_product(other), 3):
-            return False
-        return True
+    def is_ortho(self, other, epsilon=1e-10):
+        return abs(self.dot_product(other)) < epsilon
+
+    # -----------------------------------------------------------------------------
+    # is_parallel(self, other):
+    #   Determine if two vectors are parallel. This is done by calculating
+    #   the normalized dot product. If the result is close to (within epsilon of) 1
+    #   then the vectors are parallel.
+    #
+    # Arguments:
+    #   self, other: Vector objects
+    #   epsilon: allowable tolerance between the result and value of 1
+    #
+    # Returns:
+    #   the 'bool' type based on whether the vectors are parallel or not
+    def is_parallel(self, other, epsilon=1e-10):
+        return (self.is_zero() or other.is_zero()
+                or abs(abs(self.normalize().dot_product(other.normalize())) - 1) < epsilon)
+
+    # -----------------------------------------------------------------------------
+    # is_zero(self, other):
+    #   Determine if the vector is the zero vector. The vector is the zero vector
+    #   if it's magnitude is close to zero.
+    #
+    # Arguments:
+    #   self: a Vector object
+    #   epsilon: allowable tolerance between the result and value of zero
+    #
+    # Returns:
+    #   the 'bool' type based on whether the vectors are parallel or not
+    def is_zero(self, epsilon=1e-10):
+        return abs(self.get_mag()) < epsilon
 
     def dot_product(self, other):
         y = 0
@@ -63,30 +70,25 @@ class Vector(object):
         return y
 
     def get_angle(self, other):
-        u1 = self.get_unit_vec()
-        u2 = other.get_unit_vec()
-
-        try:
-            return math.acos(round(u1.dot_product(u2), 5))
-
-        except ZeroDivisionError:
-            raise Exception("Cannot compute an angle with the zero vector")
+        u1 = self.normalize()
+        u2 = other.normalize()
+        return math.acos(u1.dot_product(u2))
 
     def scalar_mult(self, c):
         x = []
         for e in self.coordinates:
-            x.append(c * e)
+            x.append(Decimal(c) * e)
         return Vector(x)
 
     def get_mag(self):
-        x = 0
+        x = Decimal('0.0')
         for e in self.coordinates:
-            x += e ** 2
-        return x ** 0.5
+            x += e ** Decimal('2.0')
+        return x ** Decimal('0.5')
 
-    def get_unit_vec(self):
+    def normalize(self):
         try:
-            return self.scalar_mult(1/self.get_mag())
+            return self.scalar_mult(Decimal('1.0')/self.get_mag())
 
         except ZeroDivisionError:
             raise Exception("Cannot normalize the zero vector")
@@ -123,41 +125,42 @@ class Vector(object):
 
 
 def test():
-    vector_1 = Vector([1, 2, -1])
-    vector_2 = Vector([3, 1, 0])
-    vector_3 = vector_2.scalar_mult(math.pi)
-    vector_4 = Vector([0, 0, 0])
-    vector_5 = Vector([3, 4, 11])
+    v1 = Vector([1, 2, -1])
+    v2 = Vector([3, 1, 0])
 
-    ### test for __eq__() method
-    # print(vector_1 == vector_2)
+    v3 = Vector([-7.579, -7.88])
+    v4 = Vector([22.737, 23.64])
 
-    ### test is_zero() method
-    # print(vector_1.is_zero())
-    # print(vector_4.is_zero())
+    v5 = Vector([-2.029, 9.97, 4.172])
+    v6 = Vector([-9.231, -6.639, -7.245])
 
-    ### test for dot_product() method
-    # print(vector_1.dot_product(vector_2))
+    v7 = Vector([-2.328, -7.284, -1.214])
+    v8 = Vector([-1.821, 1.072, -2.94])
 
-    ### test for .get_angle() method
-    # print((vector_1.get_angle(vector_2)))
-    # print((vector_2.get_angle(vector_3)))
-    # print((vector_1.get_angle(vector_4)))
+    v9 = Vector([2.118, 4.827])
+    v10 = Vector([0, 0])
 
-    ### test for is_parallel() method
-    print(vector_1.is_parallel(vector_2))
-    print(vector_2.is_parallel(vector_3))
-    print(vector_3.is_parallel(vector_2))
-    print(vector_3.is_parallel(vector_4))
-    print(vector_4.is_parallel(vector_3))
+    # test for dot_product() method
+    # print(v3.dot_product(v4))
+    # print(v3.normalize().dot_product(v4.normalize()))
+    # print(v7.normalize().dot_product(v8.normalize()))
 
-    ### test for is_ortho() method
-    # print(vector_1.is_ortho(vector_5))
-    # print(vector_1.is_ortho(vector_4))
-    # print(vector_5.is_ortho(vector_1))
-    # print(vector_4.is_ortho(vector_1))
-    # print(vector_1.is_ortho(vector_2))
+    # test for get_angle() method
+    # print(math.degrees(v3.get_angle(v4)))
+    # print(math.degrees(v5.get_angle(v6)))
+    # print(math.degrees(v7.get_angle(v8)))
 
+    # test for is_ortho() method
+    # print(v3.is_ortho(v4))
+    # print(v5.is_ortho(v6))
+    # print(v7.is_ortho(v8))
+    # print(v9.is_ortho(v10))
+
+    # test for is_ortho() method
+    print(v3.is_parallel(v4))
+    print(v5.is_parallel(v6))
+    print(v7.is_parallel(v8))
+    print(v9.is_parallel(v10))
 
 if __name__ == '__main__':
     test()
