@@ -61,7 +61,7 @@ class Vector(object):
     # Returns:
     #   the 'bool' type based on whether the vectors are parallel or not
     def is_zero(self, epsilon=1e-10):
-        return abs(self.get_mag()) < epsilon
+        return self.get_mag() < epsilon
 
     def dot_product(self, other):
         y = 0
