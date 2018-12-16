@@ -29,16 +29,27 @@ class Vector(object):
     def is_parallel(self, other):
         if self.is_zero() or other.is_zero():
             return True
-        c = other.coordinates[0] / self.coordinates[0]
-        return self.scalar_mult(c) == other
-
-    def is_ortho(self, other):
-        pass
+        return self.get_unit_vec() == other.get_unit_vec()
 
     def is_zero(self):
         for e in self.coordinates:
             if e:
                 return False
+        return True
+
+    # -----------------------------------------------------------------------------
+    # is_ortho(self, other):
+    #   Determine if two vectors are orthogonal. The vectors are orthogonal if the
+    #   dot products of the vectors is zero.
+    #
+    # Arguments:
+    #   self, other: objects of the Vector class
+    #
+    # Returns:
+    #   the 'bool' type based on whether the vectors are orthogonal or not
+    def is_ortho(self, other):
+        if self.dot_product(other):
+            return False
         return True
 
     def dot_product(self, other):
@@ -113,28 +124,36 @@ def test():
     vector_2 = Vector([3, 1, 0])
     vector_3 = vector_2.scalar_mult(math.pi)
     vector_4 = Vector([0, 0, 0])
+    vector_5 = Vector([3, 4, 11])
 
-    # test for __eq__() method
-    print(vector_1 == vector_2)
+    ### test for __eq__() method
+    # print(vector_1 == vector_2)
 
-    # test is_zero() method
-    print(vector_1.is_zero())
-    print(vector_4.is_zero())
+    ### test is_zero() method
+    # print(vector_1.is_zero())
+    # print(vector_4.is_zero())
 
-    # test for dot_product() method
-    print(vector_1.dot_product(vector_2))
+    ### test for dot_product() method
+    # print(vector_1.dot_product(vector_2))
 
-    # test for .get_angle() method
-    print((vector_1.get_angle(vector_2)))
-    print((vector_2.get_angle(vector_3)))
+    ### test for .get_angle() method
+    # print((vector_1.get_angle(vector_2)))
+    # print((vector_2.get_angle(vector_3)))
     # print((vector_1.get_angle(vector_4)))
 
-    # test for is_parallel() method
+    ### test for is_parallel() method
     print(vector_1.is_parallel(vector_2))
     print(vector_2.is_parallel(vector_3))
     print(vector_3.is_parallel(vector_2))
     print(vector_3.is_parallel(vector_4))
     print(vector_4.is_parallel(vector_3))
+
+    ### test for is_ortho() method
+    # print(vector_1.is_ortho(vector_5))
+    # print(vector_1.is_ortho(vector_4))
+    # print(vector_5.is_ortho(vector_1))
+    # print(vector_4.is_ortho(vector_1))
+    # print(vector_1.is_ortho(vector_2))
 
 
 if __name__ == '__main__':
