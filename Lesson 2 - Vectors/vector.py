@@ -29,7 +29,11 @@ class Vector(object):
     def is_parallel(self, other):
         if self.is_zero() or other.is_zero():
             return True
-        return self.get_unit_vec() == other.get_unit_vec()
+
+        self_unit_vec = round(self.get_unit_vec(), 3)
+        other_unit_vec = round(other.get_unit_vec(), 3)
+
+        return self_unit_vec == other_unit_vec or self_unit_vec == other_unit_vec.scalar_mult(-1)
 
     def is_zero(self):
         for e in self.coordinates:
@@ -48,7 +52,7 @@ class Vector(object):
     # Returns:
     #   the 'bool' type based on whether the vectors are orthogonal or not
     def is_ortho(self, other):
-        if self.dot_product(other):
+        if round(self.dot_product(other), 3):
             return False
         return True
 
@@ -59,12 +63,11 @@ class Vector(object):
         return y
 
     def get_angle(self, other):
-        dot_product = self.dot_product(other)
-        mag_1 = self.get_mag()
-        mag_2 = other.get_mag()
+        u1 = self.get_unit_vec()
+        u2 = other.get_unit_vec()
 
         try:
-            return math.acos(dot_product / (mag_1 * mag_2))
+            return math.acos(round(u1.dot_product(u2), 5))
 
         except ZeroDivisionError:
             raise Exception("Cannot compute an angle with the zero vector")
