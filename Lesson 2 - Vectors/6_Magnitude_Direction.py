@@ -8,7 +8,7 @@ vector4 = Vector([1.996, 3.108, -4.554])
 
 print(round(vector1.get_mag(), 3))
 print(round(vector2.get_mag(), 3))
-print(round(vector3.get_unit_vec(), 3))
-print(round(vector4.get_unit_vec(), 3))
+print(round(vector3.normalize(), 3))
+print(round(vector4.normalize(), 3))
 # print(round(vector5.get_unit_vec(), 3))
 

@@ -20,6 +20,24 @@ class Vector(object):
             raise TypeError('The coordinates must be an iterable')
 
     # -----------------------------------------------------------------------------
+    # is_zero(self, other):
+    #   Determine if the vector is the zero vector. The vector is the zero vector
+    #   if it's magnitude is close to zero.
+    #
+    # Arguments:
+    #   self: a Vector object
+    #   epsilon: allowable tolerance between the result and value of zero
+    #
+    # Returns:
+    #   the 'bool' type based on whether the vectors are parallel or not
+    def proj(self, basis):
+        unit_b = basis.normalize()
+        return unit_b.scalar_mult(self.dot_product(unit_b))
+
+    def ortho(self, basis):
+        return self - self.proj(basis)
+
+    # -----------------------------------------------------------------------------
     # is_ortho(self, other):
     #   Determine if two vectors are orthogonal. The vectors are orthogonal if the
     #   dot products of the vectors is close to (within epsilon of) zero.
@@ -82,14 +100,14 @@ class Vector(object):
         return Vector(x)
 
     def get_mag(self):
-        x = Decimal('0.0')
+        x = Decimal(0.0)
         for e in self.coordinates:
-            x += e ** Decimal('2.0')
-        return x ** Decimal('0.5')
+            x += e ** Decimal(2.0)
+        return x ** Decimal(0.5)
 
     def normalize(self):
         try:
-            return self.scalar_mult(Decimal('1.0')/self.get_mag())
+            return self.scalar_mult(Decimal(1.0)/self.get_mag())
 
         except ZeroDivisionError:
             raise Exception("Cannot normalize the zero vector")
@@ -126,42 +144,21 @@ class Vector(object):
 
 
 def test():
-    v1 = Vector([1, 2, -1])
-    v2 = Vector([3, 1, 0])
+    v1 = Vector([3.039, 1.879])
+    b1 = Vector([0.825, 2.036])
 
-    v3 = Vector([-7.579, -7.88])
-    v4 = Vector([22.737, 23.64])
+    v2 = Vector([-9.88, -3.264, -8.159])
+    b2 = Vector([-2.155, -9.353, -9.473])
 
-    v5 = Vector([-2.029, 9.97, 4.172])
-    v6 = Vector([-9.231, -6.639, -7.245])
+    v3 = Vector([3.009, -6.172, 3.692, -2.51])
+    b3 = Vector([6.404, -9.144, 2.759, 8.718])
 
-    v7 = Vector([-2.328, -7.284, -1.214])
-    v8 = Vector([-1.821, 1.072, -2.94])
+    print(round(v1.proj(b1), 3))
+    print(round(b2.normalize(), 3))
+    print(round(v2.ortho(b2), 3))
+    print(round(v3.proj(b3), 3))
+    print(round(v3.ortho(b3), 3))
 
-    v9 = Vector([2.118, 4.827])
-    v10 = Vector([0, 0])
-
-    # test for dot_product() method
-    # print(v3.dot_product(v4))
-    # print(v3.normalize().dot_product(v4.normalize()))
-    # print(v7.normalize().dot_product(v8.normalize()))
-
-    # test for get_angle() method
-    # print(math.degrees(v3.get_angle(v4)))
-    # print(math.degrees(v5.get_angle(v6)))
-    # print(math.degrees(v7.get_angle(v8)))
-
-    # test for is_ortho() method
-    # print(v3.is_ortho(v4))
-    # print(v5.is_ortho(v6))
-    # print(v7.is_ortho(v8))
-    # print(v9.is_ortho(v10))
-
-    # test for is_ortho() method
-    print(v3.is_parallel(v4))
-    print(v5.is_parallel(v6))
-    print(v7.is_parallel(v8))
-    print(v9.is_parallel(v10))
 
 if __name__ == '__main__':
     test()
