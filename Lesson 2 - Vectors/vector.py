@@ -1,4 +1,7 @@
 import math
+from decimal import Decimal, getcontext
+
+getcontext().prec = 30
 
 
 class Vector(object):
@@ -7,7 +10,7 @@ class Vector(object):
             if not coordinates:
                 raise ValueError
 
-            self.coordinates = tuple(coordinates)
+            self.coordinates = tuple(Decimal(x) for x in coordinates)
             self.dimension = len(coordinates)
 
         except ValueError:
@@ -30,18 +33,18 @@ class Vector(object):
     def scalar_mult(self, c):
         x = []
         for e in self.coordinates:
-            x.append(c * e)
+            x.append(Decimal(c) * e)
         return Vector(x)
 
     def get_mag(self):
-        x = 0
+        x = Decimal('0.0')
         for e in self.coordinates:
-            x += e ** 2
-        return x ** 0.5
+            x += e ** Decimal('2.0')
+        return x ** Decimal('0.5')
 
     def normalize(self):
         try:
-            return self.scalar_mult(1/self.get_mag())
+            return self.scalar_mult(Decimal('1.0')/self.get_mag())
 
         except ZeroDivisionError:
             raise Exception("Cannot normalize the zero vector")
@@ -81,7 +84,7 @@ def test():
     v1 = Vector([1, 2, -1])
     v2 = Vector([3, 1, 0])
     v3 = Vector([-7.579, -7.88])
-    v4 = Vector([22.64, 23.64])
+    v4 = Vector([22.737, 23.64])
     v5 = Vector([-2.029, 9.97, 4.172])
     v6 = Vector([-9.231, -6.639, -7.245])
     v7 = Vector([-2.328, -7.284, -1.214])
@@ -89,15 +92,14 @@ def test():
 
 
     # test for Vector.dot_product() method
-    print(v3.dot_product(v4))
-    print(v5.dot_product(v6))
-    print(v7.dot_product(v8))
+    print(v3.normalize().dot_product(v4.normalize()))
+    print(v5.normalize().dot_product(v6.normalize()))
+    print(v7.normalize().dot_product(v8.normalize()))
 
     # test for Vector.get_angle() method
-    # print(math.degrees((v1.get_angle(v2))))
-    print(math.degrees((v3.get_angle(v4))))
-    print(math.degrees((v5.get_angle(v6))))
-    print(math.degrees((v7.get_angle(v8))))
+    print(math.degrees(v3.get_angle(v4)))
+    print(math.degrees(v5.get_angle(v6)))
+    print(math.degrees(v7.get_angle(v8)))
 
 if __name__ == '__main__':
     test()
