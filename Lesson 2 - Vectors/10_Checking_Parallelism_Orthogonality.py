@@ -1,28 +1,26 @@
 from vector import Vector
-from math import degrees
 
-v1 = Vector([-7.579, -7.88])
-w1 = Vector([22.737, 23.64])
-v2 = Vector([-2.029, 9.97, 4.172])
-w2 = Vector([-9.231, -6.639, -7.245])
-v3 = Vector([-2.328, -7.284, -1.214])
-w3 = Vector([-1.821, 1.072, -2.94])
-v4 = Vector([2.118, 4.827])
-w4 = Vector([0, 0])
+v3 = Vector([-7.579, -7.88])
+v4 = Vector([22.737, 23.64])
 
-print(degrees(v1.get_angle(w1)))
-print(v1.is_parallel(w1))
-print(v1.is_ortho(w1))
+v5 = Vector([-2.029, 9.97, 4.172])
+v6 = Vector([-9.231, -6.639, -7.245])
 
-print(degrees(v2.get_angle(w2)))
-print(v2.is_parallel(w2))
-print(v2.is_ortho(w2))
+v7 = Vector([-2.328, -7.284, -1.214])
+v8 = Vector([-1.821, 1.072, -2.94])
 
-print(degrees(v3.get_angle(w3)))
-print(v3.is_parallel(w3))
-print(v3.is_ortho(w3))
+v9 = Vector([2.118, 4.827])
+v10 = Vector([0, 0])
 
+# test for is_ortho() method
+print(v3.is_ortho(v4))
+print(v5.is_ortho(v6))
+print(v7.is_ortho(v8))
+print(v9.is_ortho(v10))
 
-print(v4.is_parallel(w4))
-print(v4.is_ortho(w4))
+# test for is_parallel() method
+print(v3.is_parallel(v4))
+print(v5.is_parallel(v6))
+print(v7.is_parallel(v8))
+print(v9.is_parallel(v10))
 
