@@ -41,7 +41,8 @@ class Vector(object):
     #
     # Arguments:
     #   self, other: Vector objects
-    #   epsilon: allowable tolerance between the result and value of 1
+    #   epsilon: allowable tolerance between the normalized dot product and values
+    #       {-1 or 1}
     #
     # Returns:
     #   the 'bool' type based on whether the vectors are parallel or not

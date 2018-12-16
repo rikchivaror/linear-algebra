@@ -12,15 +12,23 @@ v8 = Vector([-1.821, 1.072, -2.94])
 v9 = Vector([2.118, 4.827])
 v10 = Vector([0, 0])
 
-# test for is_ortho() method
-print(v3.is_ortho(v4))
-print(v5.is_ortho(v6))
-print(v7.is_ortho(v8))
-print(v9.is_ortho(v10))
+print('first pair...')
+print('is parallel:', v3.is_parallel(v4))
+print('is orthogonal:', v3.is_ortho(v4))
 
-# test for is_parallel() method
-print(v3.is_parallel(v4))
-print(v5.is_parallel(v6))
-print(v7.is_parallel(v8))
-print(v9.is_parallel(v10))
+print('\nsecond pair...')
+print('is parallel', v5.is_parallel(v6))
+print('is orthogonal:', v5.is_ortho(v6))
+
+print('\nthird pair...')
+print('is parallel', v7.is_parallel(v8))
+print('is orthogonal:', v7.is_ortho(v8))
+
+print('\nfourth pair...')
+print('is parallel', v9.is_parallel(v10))
+print('is orthogonal:', v9.is_ortho(v10))
+
+
+
+
 
