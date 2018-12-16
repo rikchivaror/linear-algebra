@@ -19,13 +19,47 @@ class Vector(object):
         except TypeError:
             raise TypeError('The coordinates must be an iterable')
 
+    # -----------------------------------------------------------------------------
+    # is_ortho(self, other):
+    #   Determine if two vectors are orthogonal. The vectors are orthogonal if the
+    #   dot products of the vectors is close to (within epsilon of) zero.
+    #
+    # Arguments:
+    #   self, other: Vector objects
+    #   epsilon: allowable tolerance between the result and value of zero
+    #
+    # Returns:
+    #   the 'bool' type based on whether the vectors are orthogonal or not
     def is_ortho(self, other, epsilon=1e-10):
         return abs(self.dot_product(other)) < epsilon
 
+    # -----------------------------------------------------------------------------
+    # is_parallel(self, other):
+    #   Determine if two vectors are parallel. This is done by calculating
+    #   the normalized dot product. If the result is close to (within epsilon of) 1
+    #   then the vectors are parallel.
+    #
+    # Arguments:
+    #   self, other: Vector objects
+    #   epsilon: allowable tolerance between the result and value of 1
+    #
+    # Returns:
+    #   the 'bool' type based on whether the vectors are parallel or not
     def is_parallel(self, other, epsilon=1e-10):
         return (self.is_zero() or other.is_zero()
                 or abs(abs(self.normalize().dot_product(other.normalize())) - 1) < epsilon)
 
+    # -----------------------------------------------------------------------------
+    # is_zero(self, other):
+    #   Determine if the vector is the zero vector. The vector is the zero vector
+    #   if it's magnitude is close to zero.
+    #
+    # Arguments:
+    #   self: a Vector object
+    #   epsilon: allowable tolerance between the result and value of zero
+    #
+    # Returns:
+    #   the 'bool' type based on whether the vectors are parallel or not
     def is_zero(self, epsilon=1e-10):
         return abs(self.get_mag()) < epsilon
 
