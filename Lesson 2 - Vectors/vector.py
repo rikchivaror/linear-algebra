@@ -5,6 +5,10 @@ getcontext().prec = 30
 
 
 class Vector(object):
+
+    CANNOT_NORMALIZE_ZERO_VECTOR_MSG = 'Cannot normalize the zero vector'
+    NO_UNIQUE_PARALLEL_COMPONENT_MSG = 'No unique parallel component found'
+
     def __init__(self, coordinates):
         try:
             if not coordinates:
@@ -19,6 +23,7 @@ class Vector(object):
         except TypeError:
             raise TypeError('The coordinates must be an iterable')
 
+    # TODO: correct this method description
     # -----------------------------------------------------------------------------
     # is_zero(self, other):
     #   Determine if the vector is the zero vector. The vector is the zero vector
@@ -31,11 +36,25 @@ class Vector(object):
     # Returns:
     #   the 'bool' type based on whether the vectors are parallel or not
     def proj(self, basis):
-        unit_b = basis.normalize()
-        return unit_b.scalar_mult(self.dot_product(unit_b))
+        try:
+            unit_b = basis.normalize()
+            return unit_b.scalar_mult(self.dot_product(unit_b))
+
+        except Exception as e:
+            if str(e) == self.CANNOT_NORMALIZE_ZERO_VECTOR_MSG:
+                raise Exception('No unique parallel component found')
+            else:
+                raise e
 
     def ortho(self, basis):
-        return self - self.proj(basis)
+        try:
+            return self - self.proj(basis)
+
+        except Exception as e:
+            if str(e) == self.NO_UNIQUE_PARALLEL_COMPONENT_MSG:
+                raise Exception(self.NO_UNIQUE_PARALLEL_COMPONENT_MSG)
+            else:
+                raise e
 
     # -----------------------------------------------------------------------------
     # is_ortho(self, other):
@@ -89,8 +108,16 @@ class Vector(object):
         return y
 
     def get_angle(self, other):
-        u1 = self.normalize()
-        u2 = other.normalize()
+        try:
+            u1 = self.normalize()
+            u2 = other.normalize()
+
+        except Exception as e:
+            if str(e) == self.CANNOT_NORMALIZE_ZERO_VECTOR_MSG:
+                raise Exception("Cannot compute an angle with the zero vector")
+            else:
+                raise e
+
         return math.acos(u1.dot_product(u2))
 
     def scalar_mult(self, c):
@@ -113,6 +140,7 @@ class Vector(object):
             raise Exception("Cannot normalize the zero vector")
 
     def __str__(self):
+        # TODO: print vectors without the 'Decimal' prefix prior to each co-ordinate.
         return 'Vector: {}'.format(self.coordinates)
 
     def __eq__(self, v):
@@ -153,6 +181,10 @@ def test():
     v3 = Vector([3.009, -6.172, 3.692, -2.51])
     b3 = Vector([6.404, -9.144, 2.759, 8.718])
 
+    b4 = Vector([0, 0])
+
+    print(round(v1.get_angle(b4)))
+    print(round(b4.normalize()))
     print(round(v1.proj(b1), 3))
     print(round(b2.normalize(), 3))
     print(round(v2.ortho(b2), 3))
