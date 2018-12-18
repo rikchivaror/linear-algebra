@@ -101,6 +101,26 @@ class Vector(object):
     def is_zero(self, epsilon=1e-10):
         return self.get_mag() < epsilon
 
+    def cross_prod(self, other):
+        # TODO: throw an exception if either vector passed into the function have a rank other than 2 or 3 and both vectors are not the same rank
+        # TODO: if vectors passed in are BOTH dim = 2, then extend the vectors into three dimensions with z-coord = 0
+        x_prod = [0, 0, 0]
+        v = self.coordinates
+        w = other.coordinates
+
+        x_prod[0] = v[1] * w[2] - w[1] * v[2]
+        x_prod[1] = w[0] * v[2] - v[0] * w[2]
+        x_prod[2] = v[0] * w[1] - w[0] * v[1]
+
+        return Vector(x_prod)
+
+    def area_parallelogram(self, other):
+        x_prod = self.cross_prod(other)
+        return x_prod.get_mag()
+
+    def area_triangle(self, other):
+        return self.area_parallelogram(other) / Decimal(2.0)
+
     def dot_product(self, other):
         y = 0
         for i in range(self.dimension):
@@ -147,16 +167,16 @@ class Vector(object):
         return self.coordinates == v.coordinates
 
     def __add__(self, other):
-        sum = []
+        result = []
         for i in range(self.dimension):
-            sum.append(self.coordinates[i] + other.coordinates[i])
-        return Vector(sum)
+            result.append(self.coordinates[i] + other.coordinates[i])
+        return Vector(result)
 
     def __sub__(self, other):
-        sum = []
+        result = []
         for i in range(self.dimension):
-            sum.append(self.coordinates[i] - other.coordinates[i])
-        return Vector(sum)
+            result.append(self.coordinates[i] - other.coordinates[i])
+        return Vector(result)
 
     def __mul__(self, other):
         prod = []
@@ -172,24 +192,27 @@ class Vector(object):
 
 
 def test():
-    v1 = Vector([3.039, 1.879])
-    b1 = Vector([0.825, 2.036])
+    # v1 = Vector([3.039, 1.879])
+    # b1 = Vector([0.825, 2.036])
+    #
+    # v2 = Vector([-9.88, -3.264, -8.159])
+    # b2 = Vector([-2.155, -9.353, -9.473])
+    #
+    # v3 = Vector([3.009, -6.172, 3.692, -2.51])
+    # b3 = Vector([6.404, -9.144, 2.759, 8.718])
 
-    v2 = Vector([-9.88, -3.264, -8.159])
-    b2 = Vector([-2.155, -9.353, -9.473])
+    v = Vector([5, 3, -2])
+    w = Vector([-1, 0, 3])
 
-    v3 = Vector([3.009, -6.172, 3.692, -2.51])
-    b3 = Vector([6.404, -9.144, 2.759, 8.718])
+    print(round(v.cross_prod(w), 3))
 
-    b4 = Vector([0, 0])
-
-    print(round(v1.get_angle(b4)))
-    print(round(b4.normalize()))
-    print(round(v1.proj(b1), 3))
-    print(round(b2.normalize(), 3))
-    print(round(v2.ortho(b2), 3))
-    print(round(v3.proj(b3), 3))
-    print(round(v3.ortho(b3), 3))
+    # print(round(v1.get_angle(b4)))
+    # print(round(b4.normalize()))
+    # print(round(v1.proj(b1), 3))
+    # print(round(b2.normalize(), 3))
+    # print(round(v2.ortho(b2), 3))
+    # print(round(v3.proj(b3), 3))
+    # print(round(v3.ortho(b3), 3))
 
 
 if __name__ == '__main__':
