@@ -115,7 +115,11 @@ class Vector(object):
 
     def cross_prod(self, other):
         # TODO: throw an exception if either vector passed into the function have a rank other than 2 or 3 and both vectors are not the same rank
-        # TODO: if vectors passed in are BOTH dim = 2, then extend the vectors into three dimensions with z-coord = 0
+
+        if not (self.dimension == 2 or self.dimension == 3):
+            raise Exception("The rank of one or more vectors violates {dim ϵ (2, 3)}")
+        elif self.dimension != other.dimension:
+            raise Exception("Both vectors are not of the same rank")
 
         x_prod = [0, 0, 0]
         v = list(self.coordinates)
@@ -209,27 +213,10 @@ class Vector(object):
 
 
 def test():
-    # v1 = Vector([3.039, 1.879])
-    # b1 = Vector([0.825, 2.036])
-    #
-    # v2 = Vector([-9.88, -3.264, -8.159])
-    # b2 = Vector([-2.155, -9.353, -9.473])
-    #
-    # v3 = Vector([3.009, -6.172, 3.692, -2.51])
-    # b3 = Vector([6.404, -9.144, 2.759, 8.718])
-
     v = Vector([5, 3])
-    w = Vector([-1, 0])
+    w = Vector([-1, 0, 6])
 
     print(round(v.cross_prod(w), 3))
-
-    # print(round(v1.get_angle(b4)))
-    # print(round(b4.normalize()))
-    # print(round(v1.proj(b1), 3))
-    # print(round(b2.normalize(), 3))
-    # print(round(v2.ortho(b2), 3))
-    # print(round(v3.proj(b3), 3))
-    # print(round(v3.ortho(b3), 3))
 
 
 if __name__ == '__main__':
