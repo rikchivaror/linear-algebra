@@ -23,18 +23,18 @@ class Vector(object):
         except TypeError:
             raise TypeError('The coordinates must be an iterable')
 
-    # TODO: correct this method description
     # -----------------------------------------------------------------------------
-    # is_zero(self, other):
-    #   Determine if the vector is the zero vector. The vector is the zero vector
-    #   if it's magnitude is close to zero.
+    # projection_to(self, basis):
+    #   Determine the parallel component of the vector passed into 'self' with the
+    #   'basis' vector. To calculate this we use the formula:
+    #   (self_vec ‖ basis_vec) = basis_unit_vec * ( self_vec • u_basis_vec )
     #
     # Arguments:
-    #   self: a Vector object
-    #   epsilon: allowable tolerance between the result and value of zero
+    #   self: any Vector object
+    #   basis: the basis Vector that the parallel component of 'self' will be determined from.
     #
     # Returns:
-    #   the 'bool' type based on whether the vectors are parallel or not
+    #   the Vector component of 'self' that is parallel to 'bas'is.
     def projection_to(self, basis):
         try:
             unit_b = basis.normalize()
@@ -46,6 +46,18 @@ class Vector(object):
             else:
                 raise e
 
+    # -----------------------------------------------------------------------------
+    # orthogonal_to(self, basis):
+    #   Determine the orthogonal component of the vector 'self' with the 'basis'
+    #   vector. To calculate this we use the formula:
+    #   (self_vec ┴ basis_vec) = self_vec - ( self_vec • u_basis_vec )
+    #
+    # Arguments:
+    #   self: any Vector object
+    #   basis: the basis Vector that the orthogonal component of 'self' will be determined by.
+    #
+    # Returns:
+    #   the Vector component of 'self' that is orthogonal to 'basis'.
     def orthogonal_to(self, basis):
         try:
             return self - self.projection_to(basis)
