@@ -114,8 +114,6 @@ class Vector(object):
         return self.get_mag() < epsilon
 
     def cross_prod(self, other):
-        # TODO: throw an exception if either vector passed into the function have a rank other than 2 or 3 and both vectors are not the same rank
-
         if not (self.dimension == 2 or self.dimension == 3):
             raise Exception("The rank of one or more vectors violates {dim ϵ (2, 3)}")
         elif self.dimension != other.dimension:
@@ -182,6 +180,7 @@ class Vector(object):
 
     def __str__(self):
         # TODO: print vectors without the 'Decimal' prefix prior to each co-ordinate.
+        self.coordinates = tuple(float(x) for x in self.coordinates)
         return 'Vector: {}'.format(self.coordinates)
 
     def __eq__(self, v):
