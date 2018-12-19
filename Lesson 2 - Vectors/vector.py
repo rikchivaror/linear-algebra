@@ -116,9 +116,14 @@ class Vector(object):
     def cross_prod(self, other):
         # TODO: throw an exception if either vector passed into the function have a rank other than 2 or 3 and both vectors are not the same rank
         # TODO: if vectors passed in are BOTH dim = 2, then extend the vectors into three dimensions with z-coord = 0
+
         x_prod = [0, 0, 0]
-        v = self.coordinates
-        w = other.coordinates
+        v = list(self.coordinates)
+        w = list(other.coordinates)
+
+        if self.dimension == 2:
+            v.append(Decimal(0.0))
+            w.append(Decimal(0.0))
 
         x_prod[0] = v[1] * w[2] - w[1] * v[2]
         x_prod[1] = w[0] * v[2] - v[0] * w[2]
@@ -213,8 +218,8 @@ def test():
     # v3 = Vector([3.009, -6.172, 3.692, -2.51])
     # b3 = Vector([6.404, -9.144, 2.759, 8.718])
 
-    v = Vector([5, 3, -2])
-    w = Vector([-1, 0, 3])
+    v = Vector([5, 3])
+    w = Vector([-1, 0])
 
     print(round(v.cross_prod(w), 3))
 
