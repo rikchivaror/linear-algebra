@@ -35,7 +35,7 @@ class Vector(object):
     #
     # Returns:
     #   the 'bool' type based on whether the vectors are parallel or not
-    def proj(self, basis):
+    def projection_to(self, basis):
         try:
             unit_b = basis.normalize()
             return unit_b.scalar_mult(self.dot_product(unit_b))
@@ -48,7 +48,7 @@ class Vector(object):
 
     def ortho(self, basis):
         try:
-            return self - self.proj(basis)
+            return self - self.projection_to(basis)
 
         except Exception as e:
             if str(e) == self.NO_UNIQUE_PARALLEL_COMPONENT_MSG:

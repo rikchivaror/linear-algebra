@@ -13,13 +13,13 @@ v4 = Vector([1.040, -3.361, 2.844, -5.190])
 b4 = Vector([0, 0, 0, 0])
 
 print('first pair...')
-print('The projection of v on b is', round(v1.proj(b1), 3))
+print('The projection of v on b is', round(v1.projection_to(b1), 3))
 
 print('\nsecond pair...')
 print('The orthogonal of v on b is:', round(v2.ortho(b2), 3))
 
 print('\nthird pair...')
-print('The projection of v on b is', round(v3.proj(b3), 3))
+print('The projection of v on b is', round(v3.projection_to(b3), 3))
 print('The orthogonal of v on b is:', round(v3.ortho(b3), 3))
 
 # print('\nfourth pair...')
