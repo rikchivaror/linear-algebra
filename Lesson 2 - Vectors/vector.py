@@ -46,7 +46,7 @@ class Vector(object):
             else:
                 raise e
 
-    def ortho(self, basis):
+    def orthogonal_to(self, basis):
         try:
             return self - self.projection_to(basis)
 

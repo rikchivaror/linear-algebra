@@ -16,11 +16,11 @@ print('first pair...')
 print('The projection of v on b is', round(v1.projection_to(b1), 3))
 
 print('\nsecond pair...')
-print('The orthogonal of v on b is:', round(v2.ortho(b2), 3))
+print('The orthogonal of v on b is:', round(v2.orthogonal_to(b2), 3))
 
 print('\nthird pair...')
 print('The projection of v on b is', round(v3.projection_to(b3), 3))
-print('The orthogonal of v on b is:', round(v3.ortho(b3), 3))
+print('The orthogonal of v on b is:', round(v3.orthogonal_to(b3), 3))
 
 # print('\nfourth pair...')
 # print('The projection of v on b is', round(v3.proj(v3), 3))
