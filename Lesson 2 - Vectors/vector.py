@@ -113,6 +113,16 @@ class Vector(object):
     def is_zero(self, epsilon=1e-10):
         return self.get_mag() < epsilon
 
+    # -----------------------------------------------------------------------------
+    # cross_prod(self, other):
+    #   Calculate the coordinates of a vector that is the cross-products of the
+    #   input vectors 'self' and 'other'.
+    #
+    # Arguments:
+    #   self, other: Vector objects
+    #
+    # Returns:
+    #   A vector which is the cross-product of 'self' and 'other'
     def cross_prod(self, other):
         if not (self.dimension == 2 or self.dimension == 3):
             raise Exception("The rank of one or more vectors violates {dim ϵ (2, 3)}")
@@ -133,10 +143,28 @@ class Vector(object):
 
         return Vector(x_prod)
 
+    # -----------------------------------------------------------------------------
+    # area_parallelogram(self, other):
+    #   Determine the area of a parallelogram spanned by the vectors 'self' and other
+    #
+    # Arguments:
+    #   self, other: Vector objects
+    #
+    # Returns:
+    #   An object of the Decimal class which represents the area of a parallelogram
     def area_parallelogram(self, other):
         x_prod = self.cross_prod(other)
         return x_prod.get_mag()
 
+    # -----------------------------------------------------------------------------
+    # area_triangle(self, other):
+    #   Determine the area of a triangle spanned by the vectors 'self' and other
+    #
+    # Arguments:
+    #   self, other: Vector objects
+    #
+    # Returns:
+    #   An object of the Decimal class which represents the area of a triangle
     def area_triangle(self, other):
         return self.area_parallelogram(other) / Decimal(2.0)
 
