@@ -79,7 +79,7 @@ class Vector(object):
     #
     # Returns:
     #   the 'bool' type based on whether the vectors are orthogonal or not
-    def is_ortho(self, other, epsilon=1e-10):
+    def is_orthogonal(self, other, epsilon=1e-10):
         return abs(self.dot_product(other)) < epsilon
 
     # -----------------------------------------------------------------------------
@@ -179,7 +179,6 @@ class Vector(object):
             raise Exception("Cannot normalize the zero vector")
 
     def __str__(self):
-        # TODO: print vectors without the 'Decimal' prefix prior to each co-ordinate.
         self.coordinates = tuple(float(x) for x in self.coordinates)
         return 'Vector: {}'.format(self.coordinates)
 
