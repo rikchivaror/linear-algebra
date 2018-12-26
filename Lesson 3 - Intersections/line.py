@@ -23,7 +23,6 @@ class Line(object):
 
         self.set_basepoint()
 
-
     def set_basepoint(self):
         try:
             n = self.normal_vector
@@ -41,7 +40,6 @@ class Line(object):
                 self.basepoint = None
             else:
                 raise e
-
 
     def __str__(self):
 
@@ -71,7 +69,7 @@ class Line(object):
 
         try:
             initial_index = Line.first_nonzero_index(n)
-            terms = [write_coefficient(n[i], is_initial_term=(i==initial_index)) + 'x_{}'.format(i+1)
+            terms = [write_coefficient(n[i], is_initial_term=(i == initial_index)) + 'x_{}'.format(i+1)
                      for i in range(self.dimension) if round(n[i], num_decimal_places) != 0]
             output = ' '.join(terms)
 
@@ -88,7 +86,6 @@ class Line(object):
 
         return output
 
-
     @staticmethod
     def first_nonzero_index(iterable):
         for k, item in enumerate(iterable):
@@ -100,3 +97,14 @@ class Line(object):
 class MyDecimal(Decimal):
     def is_near_zero(self, eps=1e-10):
         return abs(self) < eps
+
+
+def test():
+    v = Vector([5, 3])
+    w = Vector([-1, 0, 6])
+
+    print(round(v.cross_prod(w), 3))
+
+
+if __name__ == '__main__':
+    test()
