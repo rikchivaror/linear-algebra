@@ -25,8 +25,9 @@ class Line(object):
 
     def set_basepoint(self):
         try:
-            n = self.normal_vector
+            n = self.normal_vector.coordinates
             c = self.constant_term
+
             basepoint_coords = ['0']*self.dimension
 
             initial_index = Line.first_nonzero_index(n)
@@ -65,7 +66,7 @@ class Line(object):
 
             return output
 
-        n = self.normal_vector
+        n = self.normal_vector.coordinates
 
         try:
             initial_index = Line.first_nonzero_index(n)
@@ -100,11 +101,9 @@ class MyDecimal(Decimal):
 
 
 def test():
-    v = Vector([5, 3])
-    w = Vector([-1, 0, 6])
-
-    print(round(v.cross_prod(w), 3))
-
+    v = Vector([5, 3, 4])
+    l = Line(v, 1.2)
+    print(l)
 
 if __name__ == '__main__':
     test()
