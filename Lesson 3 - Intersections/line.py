@@ -57,7 +57,20 @@ class Line(object):
         return self.normal_vector.is_parallel(other.normal_vector)
 
     def get_intersection(self, other):
-        pass
+        if self == other:
+            return self
+        elif self.is_parallel(other):
+            return None
+
+        A, B = self.normal_vector.coordinates[0], self.normal_vector.coordinates[1]
+        k_1 = self.constant_term
+        C, D = other.normal_vector.coordinates[0], other.normal_vector.coordinates[1]
+        k_2 = other.constant_term
+        denominator = A * D - B * C
+        x = (D * k_1 - B * k_2) / denominator
+        y = (A * k_2 - C * k_1) / denominator
+
+        return Vector([x, y])
 
     def __str__(self):
 
@@ -145,6 +158,9 @@ def test():
 
     print('\nLine 1 is equal to line 2: ')
     print(l_1 == l_2)
+
+    print('\nIntersection of line 1 and line 2 is: ')
+    print(l_1.get_intersection(l_2))
 
 if __name__ == '__main__':
     test()
