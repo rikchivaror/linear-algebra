@@ -42,6 +42,23 @@ class Line(object):
             else:
                 raise e
 
+    # -----------------------------------------------------------------------------
+    # is_parallel(self, other):
+    #   Determine if two lines are parallel. This is true if the normal vectors of
+    #   the two lines are parallel. The is_parallel() method of the Vector class is
+    #   utilized in this method
+    #
+    # Arguments:
+    #   self, other: Line objects
+    #
+    # Returns:
+    #   the 'bool' type based on whether the vectors are parallel or not
+    def is_parallel(self, other):
+        return self.normal_vector.is_parallel(other.normal_vector)
+
+    def get_intersection(self, other):
+        pass
+
     def __str__(self):
 
         num_decimal_places = 3
@@ -87,6 +104,9 @@ class Line(object):
 
         return output
 
+    def __eq__(self, other):
+        pass
+
     @staticmethod
     def first_nonzero_index(iterable):
         for k, item in enumerate(iterable):
@@ -101,9 +121,17 @@ class MyDecimal(Decimal):
 
 
 def test():
-    v = Vector([5, 3, 4])
-    l = Line(v, 1.2)
-    print(l)
+    n_l_1 = Vector([1, 1])
+    k_1 = 1
+
+    n_l_2 = Vector([-3, -3])
+    k_2 = -3
+
+    l_1 = Line(n_l_1, k_1)
+    l_2 = Line(n_l_2, k_2)
+
+    print(l_1.is_parallel(l_2))
+    print(l_1.basepoint)
 
 if __name__ == '__main__':
     test()
