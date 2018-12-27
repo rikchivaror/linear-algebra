@@ -52,7 +52,7 @@ class Line(object):
     #   self, other: Line objects
     #
     # Returns:
-    #   the 'bool' type based on whether the vectors are parallel or not
+    #   the 'bool' type based on whether the vectors are parallel
     def is_parallel(self, other):
         return self.normal_vector.is_parallel(other.normal_vector)
 
@@ -105,7 +105,17 @@ class Line(object):
         return output
 
     def __eq__(self, other):
-        pass
+        dim = self.dimension
+        bp_delta_vector = ['0'] * dim   # vector pointing from base-point of line 2 to base-point of line 1
+
+        for i in range(dim):
+            bp_delta_vector[i] = other.basepoint.coordinates[i] - self.basepoint.coordinates[i]
+
+        bp_delta_vector = Vector(bp_delta_vector)
+
+        return (self.is_parallel(other)
+                and (bp_delta_vector.is_zero()
+                     or bp_delta_vector.is_orthogonal(self.normal_vector)))
 
     @staticmethod
     def first_nonzero_index(iterable):
@@ -130,8 +140,11 @@ def test():
     l_1 = Line(n_l_1, k_1)
     l_2 = Line(n_l_2, k_2)
 
+    print('Line 1 is parallel to line 2: ')
     print(l_1.is_parallel(l_2))
-    print(l_1.basepoint)
+
+    print('\nLine 1 is equal to line 2: ')
+    print(l_1 == l_2)
 
 if __name__ == '__main__':
     test()
