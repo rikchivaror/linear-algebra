@@ -22,7 +22,7 @@ w_6 = Vector([-1.821, 1.072, -2.94])
 
 
 print('first pair...')
-print('The cross product of v and w is', round(v_1.cross_prod(w_1), 3))
+print('The cross product of v and w is', v_1.cross_prod(w_1))
 
 print('\nsecond pair...')
 print('The area of the parallelogram spanned by v and w is:', round(v_2.area_parallelogram(w_2), 3))
@@ -31,10 +31,10 @@ print('\nthird pair...')
 print('The area of the triangle spanned by v and w is:', round(v_3.area_triangle(w_3), 3))
 
 print('\nfourth pair...')
-print('The cross product of v and w is', round(v_4.cross_prod(w_4), 3))
+print('The cross product of v and w is', v_4.cross_prod(w_4))
 
 print('\nfifth pair...')
-print('The cross product of v and w is', round(v_5.cross_prod(w_5), 3))
+print('The cross product of v and w is', v_5.cross_prod(w_5))
 
 print('\nsixth pair...')
-print('The cross product of v and w is', round(v_6.cross_prod(w_6), 3))
+print('The cross product of v and w is', v_6.cross_prod(w_6))

@@ -207,7 +207,8 @@ class Vector(object):
             raise Exception("Cannot normalize the zero vector")
 
     def __str__(self):
-        self.coordinates = tuple(float(x) for x in self.coordinates)
+        num_decimal_places = 3
+        self.coordinates = tuple(round(float(x), num_decimal_places) for x in self.coordinates)
         return 'Vector: {}'.format(self.coordinates)
 
     def __eq__(self, v):
