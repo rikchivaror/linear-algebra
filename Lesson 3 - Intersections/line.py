@@ -117,17 +117,13 @@ class Line(object):
         return output
 
     def __eq__(self, other):
-        dim = self.dimension
-        bp_delta_vector = ['0'] * dim   # vector pointing from base-point of line 2 to base-point of line 1
 
-        for i in range(dim):
-            bp_delta_vector[i] = other.basepoint.coordinates[i] - self.basepoint.coordinates[i]
+        if not self.is_parallel(other):
+            return False
 
-        bp_delta_vector = Vector(bp_delta_vector)
+        basepoint_diff = other.basepoint - self.basepoint
 
-        return (self.is_parallel(other)
-                and (bp_delta_vector.is_zero()
-                     or bp_delta_vector.is_orthogonal(self.normal_vector)))
+        return basepoint_diff.is_orthogonal(self.normal_vector)
 
     @staticmethod
     def first_nonzero_index(iterable):
