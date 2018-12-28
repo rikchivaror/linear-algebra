@@ -157,5 +157,6 @@ def test():
     print('\nIntersection of line 1 and line 2 is: ')
     print(l_1.get_intersection(l_2))
 
+
 if __name__ == '__main__':
     test()

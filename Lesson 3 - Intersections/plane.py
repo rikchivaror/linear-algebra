@@ -1,5 +1,4 @@
 from decimal import Decimal, getcontext
-
 from vector import Vector
 
 getcontext().prec = 30
@@ -23,10 +22,9 @@ class Plane(object):
 
         self.set_basepoint()
 
-
     def set_basepoint(self):
         try:
-            n = self.normal_vector
+            n = self.normal_vector.coordinates
             c = self.constant_term
             basepoint_coords = ['0']*self.dimension
 
@@ -42,6 +40,19 @@ class Plane(object):
             else:
                 raise e
 
+    # -----------------------------------------------------------------------------
+    # is_parallel(self, other):
+    #   Determine if two planes are parallel. This is true if the normal vectors of
+    #   the two planes are parallel. The is_parallel() method of the Vector class is
+    #   utilized in this method.
+    #
+    # Arguments:
+    #   self, other: Plane objects
+    #
+    # Returns:
+    #   the 'bool' type based on whether the vectors are parallel
+    def is_parallel(self, other):
+        return self.normal_vector.is_parallel(other.normal_vector)
 
     def __str__(self):
 
@@ -67,7 +78,7 @@ class Plane(object):
 
             return output
 
-        n = self.normal_vector
+        n = self.normal_vector.coordinates
 
         try:
             initial_index = Plane.first_nonzero_index(n)
@@ -88,6 +99,14 @@ class Plane(object):
 
         return output
 
+    def __eq__(self, other):
+
+        if not self.is_parallel(other):
+            return False
+
+        basepoint_diff = other.basepoint - self.basepoint
+
+        return basepoint_diff.is_orthogonal(self.normal_vector)
 
     @staticmethod
     def first_nonzero_index(iterable):
@@ -100,3 +119,27 @@ class Plane(object):
 class MyDecimal(Decimal):
     def is_near_zero(self, eps=1e-10):
         return abs(self) < eps
+
+
+def test():
+    n_l_1 = Vector([1, 1, 1])
+    k_1 = 1
+
+    n_l_2 = Vector([-3, -3, -3])
+    k_2 = -3
+
+    p_1 = Plane(n_l_1, k_1)
+    p_2 = Plane(n_l_2, k_2)
+
+    print('Line 1 is parallel to line 2: ')
+    print(p_1.is_parallel(p_2))
+
+    print('\nLine 1 is equal to line 2: ')
+    print(p_1 == p_2)
+    #
+    # print('\nIntersection of line 1 and line 2 is: ')
+    # print(l_1.get_intersection(l_2))
+
+
+if __name__ == '__main__':
+    test()
