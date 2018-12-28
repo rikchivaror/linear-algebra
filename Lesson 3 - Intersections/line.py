@@ -61,9 +61,9 @@ class Line(object):
         elif self.is_parallel(other):
             return None
 
-        A, B = self.normal_vector.coordinates[0], self.normal_vector.coordinates[1]
+        A, B = self.normal_vector.coordinates
+        C, D = other.normal_vector.coordinates
         k_1 = self.constant_term
-        C, D = other.normal_vector.coordinates[0], other.normal_vector.coordinates[1]
         k_2 = other.constant_term
         denominator = A * D - B * C
         x = (D * k_1 - B * k_2) / denominator
