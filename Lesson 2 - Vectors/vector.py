@@ -238,6 +238,12 @@ class Vector(object):
             rounded.append(round(self.coordinates[i], n))
         return Vector(rounded)
 
+    def __getitem__(self, i):
+        return self.coordinates[i]
+
+    def __iter__(self):
+        return self.coordinates.__iter__()
+
 
 def test():
     v = Vector([5, 3])
