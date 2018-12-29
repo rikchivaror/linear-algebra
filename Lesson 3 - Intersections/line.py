@@ -24,7 +24,7 @@ class Line(object):
 
     def set_basepoint(self):
         try:
-            n = self.normal_vector.coordinates
+            n = self.normal_vector
             c = self.constant_term
 
             basepoint_coords = ['0']*self.dimension
@@ -61,8 +61,8 @@ class Line(object):
         elif self.is_parallel(other):
             return None
 
-        A, B = self.normal_vector.coordinates
-        C, D = other.normal_vector.coordinates
+        A, B = self.normal_vector
+        C, D = other.normal_vector
         k_1 = self.constant_term
         k_2 = other.constant_term
         denominator = A * D - B * C
@@ -95,7 +95,7 @@ class Line(object):
 
             return output
 
-        n = self.normal_vector.coordinates
+        n = self.normal_vector
 
         try:
             initial_index = Line.first_nonzero_index(n)
