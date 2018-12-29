@@ -24,7 +24,7 @@ class Plane(object):
 
     def set_basepoint(self):
         try:
-            n = self.normal_vector.coordinates
+            n = self.normal_vector
             c = self.constant_term
             basepoint_coords = ['0']*self.dimension
 
@@ -78,7 +78,7 @@ class Plane(object):
 
             return output
 
-        n = self.normal_vector.coordinates
+        n = self.normal_vector
 
         try:
             initial_index = Plane.first_nonzero_index(n)
