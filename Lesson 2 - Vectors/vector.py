@@ -246,7 +246,7 @@ class Vector(object):
 
 
 def test():
-    v = Vector([5, 3])
+    v = Vector([5, 3, 3])
     w = Vector([-1, 0, 6])
 
     print(round(v.cross_prod(w), 3))
