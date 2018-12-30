@@ -208,8 +208,8 @@ class Vector(object):
 
     def __str__(self):
         num_decimal_places = 3
-        self.coordinates = tuple(round(float(x), num_decimal_places) for x in self.coordinates)
-        return 'Vector: {}'.format(self.coordinates)
+        coordinates = tuple(round(float(x), num_decimal_places) for x in self.coordinates)
+        return 'Vector: {}'.format(coordinates)
 
     def __eq__(self, v):
         return self.coordinates == v.coordinates
