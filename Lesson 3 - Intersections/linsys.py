@@ -25,6 +25,11 @@ class LinearSystem(object):
         except AssertionError:
             raise Exception(self.ALL_PLANES_MUST_BE_IN_SAME_DIM_MSG)
 
+    def compute_triangular_form(self):
+        system = deepcopy(self)
+        # TODO: add some code here
+        return system
+
     # -----------------------------------------------------------------------------
     # swap_rows(self, row1, row2):
     #   Swap the position of two Plane objects within the LineaSystem object list
@@ -59,7 +64,7 @@ class LinearSystem(object):
     # add_multiple_times_row_to_row(self, coefficient, row_to_add, row_to_be_added_to):
     #   For a given Plane multiply both sides of the equation with the coefficient
     #   and add each side of the equation to each size of an equation for another
-    #   Plane.
+    #   Plane. Only the attributes of the Plane indexed by 'row_to_be_added' are modified.
     #
     # Arguments:
     #   self: a LinearSystem object
