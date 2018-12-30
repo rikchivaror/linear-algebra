@@ -49,24 +49,35 @@ if not (s[0] == p1 and
     print('test case 6 failed')
 else:
     print('test case 6 passed')
-#
-# s.add_multiple_times_row_to_row(0,0,1)
-# if not (s[0] == p1 and
-#         s[1] == Plane(normal_vector=Vector(['10','10','10']), constant_term='10') and
-#         s[2] == Plane(normal_vector=Vector(['-1','-1','1']), constant_term='-3') and
-#         s[3] == p3):
-#     print('test case 7 failed')
-#
-# s.add_multiple_times_row_to_row(1,0,1)
-# if not (s[0] == p1 and
-#         s[1] == Plane(normal_vector=Vector(['10','11','10']), constant_term='12') and
-#         s[2] == Plane(normal_vector=Vector(['-1','-1','1']), constant_term='-3') and
-#         s[3] == p3):
-#     print('test case 8 failed')
-#
-# s.add_multiple_times_row_to_row(-1,1,0)
-# if not (s[0] == Plane(normal_vector=Vector(['-10','-10','-10']), constant_term='-10') and
-#         s[1] == Plane(normal_vector=Vector(['10','11','10']), constant_term='12') and
-#         s[2] == Plane(normal_vector=Vector(['-1','-1','1']), constant_term='-3') and
-#         s[3] == p3):
-#     print('test case 9 failed')
+
+s.add_multiple_times_row_to_row(0,0,1)
+if not (s[0] == p1 and
+        s[1] == Plane(normal_vector=Vector(['10','10','10']), constant_term='10') and
+        s[2] == Plane(normal_vector=Vector(['-1','-1','1']), constant_term='-3') and
+        s[3] == p3):
+    print('test case 7 failed')
+else:
+    print('test case 7 passed')
+
+s.add_multiple_times_row_to_row(1,0,1)
+if not (s[0] == p1 and
+        s[1] == Plane(normal_vector=Vector(['10','11','10']), constant_term='12') and
+        s[2] == Plane(normal_vector=Vector(['-1','-1','1']), constant_term='-3') and
+        s[3] == p3):
+    print('test case 8 failed: ')
+    print(s)
+    print(p1)
+    print(Plane(normal_vector=Vector(['10','11','10']), constant_term='12'))
+    print(Plane(normal_vector=Vector(['-1','-1','1']), constant_term='-3'))
+    print(p3)
+else:
+    print('test case 8 passed')
+
+s.add_multiple_times_row_to_row(-1,1,0)
+if not (s[0] == Plane(normal_vector=Vector(['-10','-10','-10']), constant_term='-10') and
+        s[1] == Plane(normal_vector=Vector(['10','11','10']), constant_term='12') and
+        s[2] == Plane(normal_vector=Vector(['-1','-1','1']), constant_term='-3') and
+        s[3] == p3):
+    print('test case 9 failed')
+else:
+    print('test case 9 passed')
