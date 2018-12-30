@@ -55,8 +55,25 @@ class LinearSystem(object):
         coefficient = coefficient * self[row].constant_term
         self[row] = Plane(normal_vector, coefficient)
 
+    # -----------------------------------------------------------------------------
+    # add_multiple_times_row_to_row(self, coefficient, row_to_add, row_to_be_added_to):
+    #   For a given Plane multiply both sides of the equation with the coefficient
+    #   and add each side of the equation to each size of an equation for another
+    #   Plane.
+    #
+    # Arguments:
+    #   self: a LinearSystem object
+    #   row_to_add, row_to_be_added_to: Integer which indexes a Plane object within
+    #   the LinearSystem object
+    #   coefficient: Integer type
+    #
+    # Returns:
+    #   None
     def add_multiple_times_row_to_row(self, coefficient, row_to_add, row_to_be_added_to):
-        pass
+        normal_vector = self[row_to_add].normal_vector.scalar_mult(coefficient) + \
+                        self[row_to_be_added_to].normal_vector
+        constant_term = coefficient * self[row_to_add].constant_term + self[row_to_be_added_to].constant_term
+        self[row_to_be_added_to] = Plane(normal_vector, constant_term)
 
     def indices_of_first_nonzero_terms_in_each_row(self):
         num_equations = len(self)
