@@ -25,8 +25,18 @@ class LinearSystem(object):
         except AssertionError:
             raise Exception(self.ALL_PLANES_MUST_BE_IN_SAME_DIM_MSG)
 
+    # -----------------------------------------------------------------------------
+    # swap_rows(self, row1, row2):
+    #   Swap the position of two Plane objects within the LineaSystem object list
+    #
+    # Arguments:
+    #   self: a LinearSystem object
+    #   row1, row2: index of the list of Plane objects within the LinearSystem object
+    #
+    # Returns:
+    #   None
     def swap_rows(self, row1, row2):
-        pass # add your code here
+        self[row1], self[row2] = self[row2], self[row1]
 
     def multiply_coefficient_and_row(self, coefficient, row):
         pass # add your code here
