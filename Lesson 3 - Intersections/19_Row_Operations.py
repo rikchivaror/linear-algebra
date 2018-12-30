@@ -26,23 +26,29 @@ if not (s[0] == p1 and s[1] == p0 and s[2] == p2 and s[3] == p3):
 else:
     print('test case 2 passed')
 
-# s.multiply_coefficient_and_row(1,0)
-# if not (s[0] == p1 and s[1] == p0 and s[2] == p2 and s[3] == p3):
-#     print('test case 4 failed')
-#
-# s.multiply_coefficient_and_row(-1,2)
-# if not (s[0] == p1 and
-#         s[1] == p0 and
-#         s[2] == Plane(normal_vector=Vector(['-1','-1','1']), constant_term='-3') and
-#         s[3] == p3):
-#     print('test case 5 failed')
-#
-# s.multiply_coefficient_and_row(10,1)
-# if not (s[0] == p1 and
-#         s[1] == Plane(normal_vector=Vector(['10','10','10']), constant_term='10') and
-#         s[2] == Plane(normal_vector=Vector(['-1','-1','1']), constant_term='-3') and
-#         s[3] == p3):
-#     print('test case 6 failed')
+s.multiply_coefficient_and_row(1,0)
+if not (s[0] == p1 and s[1] == p0 and s[2] == p2 and s[3] == p3):
+    print('test case 4 failed')
+else:
+    print('test case 4 passed')
+
+s.multiply_coefficient_and_row(-1,2)
+if not (s[0] == p1 and
+        s[1] == p0 and
+        s[2] == Plane(normal_vector=Vector(['-1','-1','1']), constant_term='-3') and
+        s[3] == p3):
+    print('test case 5 failed')
+else:
+    print('test case 5 passed')
+
+s.multiply_coefficient_and_row(10,1)
+if not (s[0] == p1 and
+        s[1] == Plane(normal_vector=Vector(['10','10','10']), constant_term='10') and
+        s[2] == Plane(normal_vector=Vector(['-1','-1','1']), constant_term='-3') and
+        s[3] == p3):
+    print('test case 6 failed')
+else:
+    print('test case 6 passed')
 #
 # s.add_multiple_times_row_to_row(0,0,1)
 # if not (s[0] == p1 and

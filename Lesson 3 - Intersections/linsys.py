@@ -38,8 +38,21 @@ class LinearSystem(object):
     def swap_rows(self, row1, row2):
         self[row1], self[row2] = self[row2], self[row1]
 
+    # -----------------------------------------------------------------------------
+    # multiply_coefficient_and_row(self, coefficient, row):
+    #   For a given Plane within the LinearSystem multiply its normal vector and
+    #   constant term with the coefficient.
+    #
+    # Arguments:
+    #   self: a LinearSystem object
+    #   row: Integer which indexes a Plane object within the LinearSystem object
+    #   coefficient: Integer type
+    #
+    # Returns:
+    #   None
     def multiply_coefficient_and_row(self, coefficient, row):
-        pass # add your code here
+        self[row].normal_vector = self[row].normal_vector.scalar_mult(coefficient)
+        self[row].constant_term = coefficient * self[row].constant_term
 
     def add_multiple_times_row_to_row(self, coefficient, row_to_add, row_to_be_added_to):
         pass # add your code here
