@@ -27,7 +27,31 @@ class LinearSystem(object):
 
     def compute_triangular_form(self):
         system = deepcopy(self)
-        # TODO: add some code here
+        rank = len(system)
+
+        for current_row in range(rank-1):
+            # find first row below the current row with the smallest index which contains the first non-zero term (FZNT)
+            fnzt_indices = system.indices_of_first_nonzero_terms_in_each_row()
+            lower_row_fnzt_indices = fnzt_indices[current_row+1:]
+            smallest_fnzt_index = min(lower_row_fnzt_indices)
+
+            # if a row with the smallest FZNT index has an index which is smaller than the current row, swap_rows
+            if smallest_fnzt_index < fnzt_indices[current_row]:
+                row_to_swap = lower_row_fnzt_indices.index(smallest_fnzt_index) + current_row + 1
+                system.swap_rows(current_row, row_to_swap)
+
+            for lower_row in range(current_row+1, rank):
+                # update the list of indices for FZNT's for each row.
+                fnzt_indices = system.indices_of_first_nonzero_terms_in_each_row()
+
+                # if the FZNT index of the lower_row is equal to the FZNT index of the current row
+                if fnzt_indices[current_row] == fnzt_indices[lower_row]:
+                    numerator = system[lower_row].normal_vector[fnzt_indices[lower_row]]
+                    denominator = system[current_row].normal_vector[fnzt_indices[current_row]]
+                    beta = -(numerator / denominator)
+                    # find the coefficient, multiply to the current row and add result to the lower_row
+                    system.add_multiple_times_row_to_row(beta, current_row, lower_row)
+
         return system
 
     # -----------------------------------------------------------------------------
@@ -124,23 +148,40 @@ class MyDecimal(Decimal):
 
 
 def test():
-    p0 = Plane(normal_vector=Vector(['1','1','1']), constant_term='1')
-    p1 = Plane(normal_vector=Vector(['0','1','0']), constant_term='2')
-    p2 = Plane(normal_vector=Vector(['1','1','-1']), constant_term='3')
-    p3 = Plane(normal_vector=Vector(['1','0','-2']), constant_term='2')
+    p1 = Plane(normal_vector=Vector(['1', '1', '1']), constant_term='1')
+    p2 = Plane(normal_vector=Vector(['0', '1', '1']), constant_term='2')
+    s = LinearSystem([p1, p2])
+    print(s.compute_triangular_form())
 
-    s = LinearSystem([p0,p1,p2,p3])
+    p1 = Plane(normal_vector=Vector(['1', '1', '1']), constant_term='1')
+    p2 = Plane(normal_vector=Vector(['0', '1', '0']), constant_term='2')
+    p3 = Plane(normal_vector=Vector(['1', '1', '-1']), constant_term='3')
+    p4 = Plane(normal_vector=Vector(['1', '0', '-2']), constant_term='2')
+    s = LinearSystem([p1, p2, p3, p4])
+    print(s.compute_triangular_form())
 
-    print(s.indices_of_first_nonzero_terms_in_each_row())
-    print('{},{},{},{}'.format(s[0],s[1],s[2],s[3]))
-    print(len(s))
-    print(s)
+    p1 = Plane(normal_vector=Vector(['1','1','1']), constant_term='1')
+    p2 = Plane(normal_vector=Vector(['1','1','1']), constant_term='2')
+    s = LinearSystem([p1,p2])
+    print(s.compute_triangular_form())
 
-    s[0] = p1
-    print(s)
+    p1 = Plane(normal_vector=Vector(['0','1','1']), constant_term='1')
+    p2 = Plane(normal_vector=Vector(['1','-1','1']), constant_term='2')
+    p3 = Plane(normal_vector=Vector(['1','2','-5']), constant_term='3')
+    s = LinearSystem([p1,p2,p3])
+    print(s.compute_triangular_form())
+    #
+    # print(s.indices_of_first_nonzero_terms_in_each_row())
+    # print('{},{},{},{}'.format(s[0],s[1],s[2],s[3]))
+    # print(len(s))
+    # print(s)
+    #
+    # s[0] = p1
+    # print(s)
+    #
+    # print(MyDecimal('1e-9').is_near_zero())
+    # print(MyDecimal('1e-11').is_near_zero())
 
-    print(MyDecimal('1e-9').is_near_zero())
-    print(MyDecimal('1e-11').is_near_zero())
 
 
 if __name__ == '__main__':
