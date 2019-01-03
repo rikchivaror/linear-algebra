@@ -104,7 +104,12 @@ class Plane(object):
         if not self.is_parallel(other):
             return False
 
-        basepoint_diff = other.basepoint - self.basepoint
+        try:    # an exception occurs if one of the planes has a zero normal vector
+            basepoint_diff = other.basepoint - self.basepoint
+        except TypeError:
+            if not other.basepoint and not self.basepoint:
+                return True
+            return False
 
         return basepoint_diff.is_orthogonal(self.normal_vector)
 
