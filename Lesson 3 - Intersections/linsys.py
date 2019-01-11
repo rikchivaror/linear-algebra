@@ -25,32 +25,85 @@ class LinearSystem(object):
         except AssertionError:
             raise Exception(self.ALL_PLANES_MUST_BE_IN_SAME_DIM_MSG)
 
+    # -----------------------------------------------------------------------------
+    # compute_rref(self):
+    #   Bring the system of equations into reduced row echelon form.
+    #                  --                  --
+    #                  | 1  0  0      0 = x |
+    #                  | 0  1  0  ... 0 = x |
+    #   LinearSystem = | 0  0  1      0 = x |
+    #                  |    :         :     |
+    #                  | 0  0  0  ... 1 = x |
+    #                  --                  --
+    # Arguments:
+    #   self: a LinearSystem object
+    #
+    # Returns:
+    #   LinearSystem object
+    def compute_rref(self):
+        tf = self.compute_triangular_form()
+        fnzt_indices = tf.indices_of_first_nonzero_terms_in_each_row()
+
+        for row_i, pivot_i in enumerate(fnzt_indices):      # 'row_i' indexes each row in the system of eq. referenced
+            pivot_term = tf[row_i].normal_vector[pivot_i]   # by 'tf' for which row-reduction will be performed
+            if not (pivot_term == 1 or pivot_i == -1):
+                tf.multiply_coefficient_and_row(1/pivot_term, row_i)
+
+            for term_i in range(tf.dimension):              # cycle through each non-zero term in 'row_i' and perform
+                term = tf[row_i].normal_vector[term_i]      # row-reduction on terms that have an index greater than
+                if not (term and term_i > pivot_i):         # the pivot term
+                    continue
+                try:
+                    row_j = fnzt_indices.index(term_i)      # 'row_j' is the index of the first row below 'row_i'
+                except ValueError:                          # that has a pivot term at the same index as 'term_i'
+                    continue
+
+                beta = - (term / tf[row_j].normal_vector[term_i])   # do row-reduction on target row: 'row_i'
+                tf.add_multiple_times_row_to_row(beta, row_j, row_i)
+
+        return tf
+
+    # -----------------------------------------------------------------------------
+    # compute_triangular_form(self):
+    #   Bring the system of equations into triangular form. This is a helper function
+    #   for compute_rref(self).
+    #                  --                  --
+    #                  | x  x  x      x = x |
+    #                  | 0  x  x  ... x = x |
+    #   LinearSystem = | 0  0  x      x = x |
+    #                  |    :         :     |
+    #                  | 0  0  0  ... x = x |
+    #                  --                  --
+    # Arguments:
+    #   self: a LinearSystem object
+    #
+    # Returns:
+    #   LinearSystem object
     def compute_triangular_form(self):
         system = deepcopy(self)
         rank = len(system)
 
-        for current_row in range(rank-1):
-            # find first row below the current row with the smallest index which contains the first non-zero term (FZNT)
+        for row_i in range(rank-1):
+            # find next row below current_row with the lowest index containing first non-zero term (FNZT)
             fnzt_indices = system.indices_of_first_nonzero_terms_in_each_row()
-            lower_row_fnzt_indices = fnzt_indices[current_row+1:]
+            lower_row_fnzt_indices = fnzt_indices[row_i+1:]
             smallest_fnzt_index = min(lower_row_fnzt_indices)
 
-            # if a row with the smallest FZNT index has an index which is smaller than the current row, swap_rows
-            if smallest_fnzt_index < fnzt_indices[current_row]:
-                row_to_swap = lower_row_fnzt_indices.index(smallest_fnzt_index) + current_row + 1
-                system.swap_rows(current_row, row_to_swap)
+            # if row with smallest FNZT index has an index smaller than the current row, swap_rows those rows
+            if smallest_fnzt_index < fnzt_indices[row_i]:
+                row_to_swap = lower_row_fnzt_indices.index(smallest_fnzt_index) + row_i + 1
+                system.swap_rows(row_i, row_to_swap)
 
-            for lower_row in range(current_row+1, rank):
-                # update the list of indices for FZNT's for each row.
+            for row_j in range(row_i+1, rank):
+                # update the FNZT indices for each row.
                 fnzt_indices = system.indices_of_first_nonzero_terms_in_each_row()
-
-                # if the FZNT index of the lower_row is equal to the FZNT index of the current row
-                if fnzt_indices[current_row] == fnzt_indices[lower_row]:
-                    numerator = system[lower_row].normal_vector[fnzt_indices[lower_row]]
-                    denominator = system[current_row].normal_vector[fnzt_indices[current_row]]
-                    beta = -(numerator / denominator)
-                    # find the coefficient, multiply to the current row and add result to the lower_row
-                    system.add_multiple_times_row_to_row(beta, current_row, lower_row)
+                # if the FNZT index of the lower_row matches the FNZT index of the current row...
+                if fnzt_indices[row_i] == fnzt_indices[row_j]:
+                    numerator = system[row_j].normal_vector[fnzt_indices[row_j]]
+                    denominator = system[row_i].normal_vector[fnzt_indices[row_i]]
+                    beta = -numerator / denominator
+                    # ...multiply coefficient with current_row, add that to lower_row and replace lower_row with result
+                    system.add_multiple_times_row_to_row(beta, row_i, row_j)
 
         return system
 
@@ -181,7 +234,6 @@ def test():
     #
     # print(MyDecimal('1e-9').is_near_zero())
     # print(MyDecimal('1e-11').is_near_zero())
-
 
 
 if __name__ == '__main__':
