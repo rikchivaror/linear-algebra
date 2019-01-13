@@ -26,6 +26,43 @@ class LinearSystem(object):
             raise Exception(self.ALL_PLANES_MUST_BE_IN_SAME_DIM_MSG)
 
     # -----------------------------------------------------------------------------
+    # solve_system(self):
+    #   Extract a system solution from its reduced row-echelon form following Gaussian
+    #   Elimination (GE) procedure. There are three types of cases for the solution
+    #   to a system of equations.
+    #      - unique solution: each variable is a pivot variable
+    #      - no solution: the system is inconsistent, which means we find 0 = k where
+    #           k is non-zero following Gaussian elimination
+    #      - infinite solution set: there are one or more free variables in the system
+    #           of equations following GE. Note, the number of free variables indicates
+    #           the dimension of the solution set.
+    #
+    # Arguments:
+    #   self: a LinearSystem object
+    #
+    # Returns:
+    #   solution: - a Vector object (for unique solution)
+    #             - String object (if no solution exists or infinitely many solutions)
+    def solve_system(self):
+        system = self.compute_rref()
+        fnzt_indices = system.indices_of_first_nonzero_terms_in_each_row()[:self.dimension]
+        free_variables = False
+        solution = []
+
+        for row_i, pivot_i in enumerate(fnzt_indices):               # if FNZT for any row is -1 (all terms 0) and where
+            if pivot_i == -1 and system[row_i].constant_term != 0:   # constant term k is non-zero, the system has no
+                return system.NO_SOLUTIONS_MSG                       # solution
+
+            for term in system[row_i].normal_vector[pivot_i+1:]:     # if there are non-zero terms after the pivot
+                if not MyDecimal(term).is_near_zero():               # variable the the solution cannot be unique
+                    free_variables = True
+            solution.append(system[row_i].constant_term)             # form the solution while processing the system. If
+                                                                     # the outer loop finishes then we have either an
+        if free_variables:                                           # infinite or unique solution.
+            return system.INF_SOLUTIONS_MSG
+        return Vector(solution)
+
+    # -----------------------------------------------------------------------------
     # compute_rref(self):
     #   Bring the system of equations into reduced row echelon form.
     #                  --                  --
@@ -57,9 +94,8 @@ class LinearSystem(object):
                     row_j = fnzt_indices.index(term_i)      # 'row_j' is the index of the first row below 'row_i'
                 except ValueError:                          # that has a pivot term at the same index as 'term_i'
                     continue
-
-                beta = - (term / tf[row_j].normal_vector[term_i])   # do row-reduction on target row: 'row_i'
-                tf.add_multiple_times_row_to_row(beta, row_j, row_i)
+                beta = - term / tf[row_j].normal_vector[term_i]         # do row-reduction on target row: 'row_i'
+                tf.add_multiple_times_row_to_row(beta, row_j, row_i)    # using 'row_j'
 
         return tf
 
@@ -79,31 +115,27 @@ class LinearSystem(object):
     #
     # Returns:
     #   LinearSystem object
+    # TODO: re-factor this method so it's easier to read
     def compute_triangular_form(self):
         system = deepcopy(self)
         rank = len(system)
 
         for row_i in range(rank-1):
-            # find next row below current_row with the lowest index containing first non-zero term (FNZT)
-            fnzt_indices = system.indices_of_first_nonzero_terms_in_each_row()
-            lower_row_fnzt_indices = fnzt_indices[row_i+1:]
-            smallest_fnzt_index = min(lower_row_fnzt_indices)
+            fnzt_indices = system.indices_of_first_nonzero_terms_in_each_row()  # find next row below row_i with the
+            lower_row_fnzt_indices = fnzt_indices[row_i+1:]                     # lowest index containing first non-zero
+            smallest_fnzt_index = min(lower_row_fnzt_indices)                   # term (FNZT)
 
-            # if row with smallest FNZT index has an index smaller than the current row, swap_rows those rows
-            if smallest_fnzt_index < fnzt_indices[row_i]:
+            if smallest_fnzt_index < fnzt_indices[row_i]:       # swap row_i with a row that has the smallest FNZT index
                 row_to_swap = lower_row_fnzt_indices.index(smallest_fnzt_index) + row_i + 1
                 system.swap_rows(row_i, row_to_swap)
 
             for row_j in range(row_i+1, rank):
-                # update the FNZT indices for each row.
-                fnzt_indices = system.indices_of_first_nonzero_terms_in_each_row()
-                # if the FNZT index of the lower_row matches the FNZT index of the current row...
-                if fnzt_indices[row_i] == fnzt_indices[row_j]:
-                    numerator = system[row_j].normal_vector[fnzt_indices[row_j]]
-                    denominator = system[row_i].normal_vector[fnzt_indices[row_i]]
-                    beta = -numerator / denominator
-                    # ...multiply coefficient with current_row, add that to lower_row and replace lower_row with result
-                    system.add_multiple_times_row_to_row(beta, row_i, row_j)
+                fnzt_indices = system.indices_of_first_nonzero_terms_in_each_row()  # update the FNZT indices and
+                if fnzt_indices[row_i] == fnzt_indices[row_j]:                      # if the FNZT index of the row_j
+                    numerator = system[row_j].normal_vector[fnzt_indices[row_j]]    # matches the FNZT index of the
+                    denominator = system[row_i].normal_vector[fnzt_indices[row_i]]  # current row then multiply coef.
+                    beta = - numerator / denominator                                # with row_i, add that to row_j and
+                    system.add_multiple_times_row_to_row(beta, row_i, row_j)        # replace row_j with result
 
         return system
 
@@ -201,28 +233,41 @@ class MyDecimal(Decimal):
 
 
 def test():
-    p1 = Plane(normal_vector=Vector(['1', '1', '1']), constant_term='1')
-    p2 = Plane(normal_vector=Vector(['0', '1', '1']), constant_term='2')
+    p1 = Plane(normal_vector=Vector(['5.862', '1.178', '-10.366']), constant_term='-8.15')
+    p2 = Plane(normal_vector=Vector(['-2.931', '-0.589', '5.183']), constant_term='-4.075')
     s = LinearSystem([p1, p2])
-    print(s.compute_triangular_form())
+    print(s.solve_system())
 
-    p1 = Plane(normal_vector=Vector(['1', '1', '1']), constant_term='1')
-    p2 = Plane(normal_vector=Vector(['0', '1', '0']), constant_term='2')
-    p3 = Plane(normal_vector=Vector(['1', '1', '-1']), constant_term='3')
-    p4 = Plane(normal_vector=Vector(['1', '0', '-2']), constant_term='2')
+    p1 = Plane(normal_vector=Vector(['8.631', '5.112', '-1.816']), constant_term='-5.113')
+    p2 = Plane(normal_vector=Vector(['4.315', '11.132', '-5.27']), constant_term='-6.775')
+    p3 = Plane(normal_vector=Vector(['-2.158', '3.01', '-1.727']), constant_term='-0.831')
+    s = LinearSystem([p1, p2, p3])
+    print(s.solve_system())
+
+    p1 = Plane(normal_vector=Vector(['5.262', '2.739', '-9.878']), constant_term='-3.441')
+    p2 = Plane(normal_vector=Vector(['5.111', '6.358', '7.638']), constant_term='-2.152')
+    p3 = Plane(normal_vector=Vector(['2.016', '-9.924', '-1.376']), constant_term='-9.278')
+    p4 = Plane(normal_vector=Vector(['2.167', '-13.593', '-18.883']), constant_term='-10.567')
     s = LinearSystem([p1, p2, p3, p4])
-    print(s.compute_triangular_form())
+    print(s.solve_system())
 
-    p1 = Plane(normal_vector=Vector(['1','1','1']), constant_term='1')
-    p2 = Plane(normal_vector=Vector(['1','1','1']), constant_term='2')
-    s = LinearSystem([p1,p2])
-    print(s.compute_triangular_form())
-
-    p1 = Plane(normal_vector=Vector(['0','1','1']), constant_term='1')
-    p2 = Plane(normal_vector=Vector(['1','-1','1']), constant_term='2')
-    p3 = Plane(normal_vector=Vector(['1','2','-5']), constant_term='3')
-    s = LinearSystem([p1,p2,p3])
-    print(s.compute_triangular_form())
+    # p1 = Plane(normal_vector=Vector(['1', '1', '1']), constant_term='1')
+    # p2 = Plane(normal_vector=Vector(['0', '1', '0']), constant_term='2')
+    # p3 = Plane(normal_vector=Vector(['1', '1', '-1']), constant_term='3')
+    # p4 = Plane(normal_vector=Vector(['1', '0', '-2']), constant_term='2')
+    # s = LinearSystem([p1, p2, p3, p4])
+    # print(s.compute_triangular_form())
+    #
+    # p1 = Plane(normal_vector=Vector(['1','1','1']), constant_term='1')
+    # p2 = Plane(normal_vector=Vector(['1','1','1']), constant_term='2')
+    # s = LinearSystem([p1,p2])
+    # print(s.compute_triangular_form())
+    #
+    # p1 = Plane(normal_vector=Vector(['0','1','1']), constant_term='1')
+    # p2 = Plane(normal_vector=Vector(['1','-1','1']), constant_term='2')
+    # p3 = Plane(normal_vector=Vector(['1','2','-5']), constant_term='3')
+    # s = LinearSystem([p1,p2,p3])
+    # print(s.compute_triangular_form())
     #
     # print(s.indices_of_first_nonzero_terms_in_each_row())
     # print('{},{},{},{}'.format(s[0],s[1],s[2],s[3]))
