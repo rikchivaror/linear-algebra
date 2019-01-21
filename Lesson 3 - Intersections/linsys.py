@@ -46,21 +46,44 @@ class LinearSystem(object):
     def solve_system(self):
         system = self.compute_rref()
         fnzt_indices = system.indices_of_first_nonzero_terms_in_each_row()[:self.dimension]
-        free_variables = False
-        solution = []
 
         for row_i, pivot_i in enumerate(fnzt_indices):               # if FNZT for any row is -1 (all terms 0) and where
             if pivot_i == -1 and system[row_i].constant_term != 0:   # constant term k is non-zero, the system has no
                 return system.NO_SOLUTIONS_MSG                       # solution
 
-            for term in system[row_i].normal_vector[pivot_i+1:]:     # if there are non-zero terms after the pivot
-                if not MyDecimal(term).is_near_zero():               # variable the the solution cannot be unique
-                    free_variables = True
-            solution.append(system[row_i].constant_term)             # form the solution while processing the system. If
-                                                                     # the outer loop finishes then we have either an
-        if free_variables:                                           # infinite or unique solution.
-            return system.INF_SOLUTIONS_MSG
-        return Vector(solution)
+        return system.make_parametric()
+
+    # -----------------------------------------------------------------------------
+    # make_parametric(self):
+    #   Helper function for solve_system(self) which outputs the parametrization
+    #   of the solution set.
+    #
+    # Arguments:
+    #   self: a LinearSystem object
+    #
+    # Returns:
+    #   solution: - a Parametrization object for the case where we have a unique
+    #               or infinite solution set
+    #             - String object (if no solution exists or infinitely many solutions)
+    def make_parametric(self):
+        base_point = []
+        dir_vectors = []
+        fnzt_indices = self.indices_of_first_nonzero_terms_in_each_row()[:self.dimension]
+
+        for row_i, pivot_i in enumerate(fnzt_indices):
+            base_point.append(self[row_i].constant_term)
+
+            if pivot_i == -1:
+                dir_vectors.append([0] * self.dimension)
+
+                for row_j in range(self.dimension):
+                    if self[row_j].normal_vector[row_i]:
+                        dir_vectors[-1][row_j] = self[row_j].normal_vector[row_i]
+
+                dir_vectors[-1][row_i] = 1
+                dir_vectors[-1] = Vector(dir_vectors[-1])
+
+        return Parametrization(Vector(base_point), dir_vectors)
 
     # -----------------------------------------------------------------------------
     # compute_rref(self):
@@ -83,17 +106,22 @@ class LinearSystem(object):
 
         for row_i, pivot_i in enumerate(fnzt_indices):      # 'row_i' indexes each row in the system of eq. referenced
             pivot_term = tf[row_i].normal_vector[pivot_i]   # by 'tf' for which row-reduction will be performed
+
             if not (pivot_term == 1 or pivot_i == -1):
                 tf.multiply_coefficient_and_row(1/pivot_term, row_i)
 
             for term_i in range(tf.dimension):              # cycle through each non-zero term in 'row_i' and perform
                 term = tf[row_i].normal_vector[term_i]      # row-reduction on terms that have an index greater than
+
                 if not (term and term_i > pivot_i):         # the pivot term
                     continue
+
                 try:
                     row_j = fnzt_indices.index(term_i)      # 'row_j' is the index of the first row below 'row_i'
+
                 except ValueError:                          # that has a pivot term at the same index as 'term_i'
                     continue
+
                 beta = - term / tf[row_j].normal_vector[term_i]         # do row-reduction on target row: 'row_i'
                 tf.add_multiple_times_row_to_row(beta, row_j, row_i)    # using 'row_j'
 
@@ -130,7 +158,8 @@ class LinearSystem(object):
                 system.swap_rows(row_i, row_to_swap)
 
             for row_j in range(row_i+1, rank):
-                fnzt_indices = system.indices_of_first_nonzero_terms_in_each_row()  # update the FNZT indices and
+                fnzt_indices = system.indices_of_first_nonzero_terms_in_each_row()  # update the FNZT indices
+
                 if fnzt_indices[row_i] == fnzt_indices[row_j]:                      # if the FNZT index of the row_j
                     numerator = system[row_j].normal_vector[fnzt_indices[row_j]]    # matches the FNZT index of the
                     denominator = system[row_i].normal_vector[fnzt_indices[row_i]]  # current row then multiply coef.
@@ -255,10 +284,10 @@ class Parametrization(object):
 
         output = ''
         for coord in range(self.dimension):
-            output += 'x_{} = {} '.format(coord + 1,
+            output += 'x_{} = {}'.format(coord + 1,
                                           round(self.basepoint[coord], 3))
             for free_var, vector in enumerate(self.direction_vectors):
-                output += '+ {} t_{}'.format(round(vector[coord], 3),
+                output += ' + {} t_{}'.format(round(vector[coord], 3),
                                              free_var + 1)
             output += '\n'
         return output
@@ -283,23 +312,28 @@ def test():
     s = LinearSystem([p1, p2, p3, p4])
     print(s.solve_system())
 
-    # p1 = Plane(normal_vector=Vector(['1', '1', '1']), constant_term='1')
-    # p2 = Plane(normal_vector=Vector(['0', '1', '0']), constant_term='2')
-    # p3 = Plane(normal_vector=Vector(['1', '1', '-1']), constant_term='3')
-    # p4 = Plane(normal_vector=Vector(['1', '0', '-2']), constant_term='2')
-    # s = LinearSystem([p1, p2, p3, p4])
-    # print(s.compute_triangular_form())
-    #
-    # p1 = Plane(normal_vector=Vector(['1','1','1']), constant_term='1')
-    # p2 = Plane(normal_vector=Vector(['1','1','1']), constant_term='2')
-    # s = LinearSystem([p1,p2])
-    # print(s.compute_triangular_form())
-    #
-    # p1 = Plane(normal_vector=Vector(['0','1','1']), constant_term='1')
-    # p2 = Plane(normal_vector=Vector(['1','-1','1']), constant_term='2')
-    # p3 = Plane(normal_vector=Vector(['1','2','-5']), constant_term='3')
-    # s = LinearSystem([p1,p2,p3])
-    # print(s.compute_triangular_form())
+    p1 = Plane(normal_vector=Vector(['1', '1', '1']), constant_term='1')
+    p2 = Plane(normal_vector=Vector(['0', '1', '0']), constant_term='2')
+    p3 = Plane(normal_vector=Vector(['1', '1', '-1']), constant_term='3')
+    p4 = Plane(normal_vector=Vector(['1', '0', '-2']), constant_term='2')
+    s = LinearSystem([p1, p2, p3, p4])
+    print(s.solve_system())
+
+    p1 = Plane(normal_vector=Vector(['1','1','1']), constant_term='1')
+    p2 = Plane(normal_vector=Vector(['1','1','1']), constant_term='2')
+    s = LinearSystem([p1,p2])
+    print(s.solve_system())
+
+    p1 = Plane(normal_vector=Vector(['0','1','1']), constant_term='1')
+    p2 = Plane(normal_vector=Vector(['1','-1','1']), constant_term='2')
+    p3 = Plane(normal_vector=Vector(['1','2','-5']), constant_term='3')
+    s = LinearSystem([p1,p2,p3])
+    print(s.solve_system())
+
+    p1 = Plane(normal_vector=Vector(['1', '1', '1']), constant_term='1')
+    p2 = Plane(normal_vector=Vector(['0', '1', '1']), constant_term='2')
+    s = LinearSystem([p1, p2])
+    print(s.solve_system())
     #
     # print(s.indices_of_first_nonzero_terms_in_each_row())
     # print('{},{},{},{}'.format(s[0],s[1],s[2],s[3]))
