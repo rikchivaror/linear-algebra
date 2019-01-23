@@ -2,7 +2,7 @@ from decimal import Decimal, getcontext
 from copy import deepcopy
 
 from vector import Vector
-from plane import Plane
+from plane import Plane     #TODO: generalize this class to higher dimensions by creating a hyperplane class (lesson 3, part 25)
 
 getcontext().prec = 30
 
