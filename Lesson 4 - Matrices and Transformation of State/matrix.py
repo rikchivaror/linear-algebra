@@ -38,7 +38,6 @@ class Matrix(object):
         return Matrix(transp_M)
 
     def matrix_mult(self, M):
-        new_M = []
 
         try:
             assert self.n_dim == M.m_dim        # check that that n-dimension of 'self' is equal to m-dimension of 'M'
@@ -46,15 +45,18 @@ class Matrix(object):
         except AssertionError:
             raise Exception(self.NUMBER_OF_A_COLS_AND_B_ROWS_DIFFERENT_MSG)
 
+        new_M = []
+        M_t = M.transpose()
+
         for i in range(self.m_dim):             # for each row in 'self' matrix put that row into a vector object
-            row_vector = Vector(self.matrix[i])
+            row_1 = Vector(self.matrix[i])
             new_M.append([])
-                                                                        # for each column in the 'M' matrix
-            for j in range(M.n_dim):                                    # put that column into a vector object
-                col_vector = Vector(M.get_column(j))                    # compute the dot product of the two vectors
-                new_M[i].append(row_vector.dot_product(col_vector))     # place the result into a new matrix at the same
-                                                                        # row as the vector from the 'self' matrix
-        return Matrix(new_M)                                            # and the same column as the 'M' matrix
+
+            for j in range(M.n_dim):                        # multiply each row of the 'self' matrix with each row of
+                row_2 = Vector(M_t.matrix[j])               # the transposed 'M' matrix
+                new_M[i].append(row_1.dot_product(row_2))   # place the result into position i,j of the new matrix
+
+        return Matrix(new_M)
 
     def scalar_mult(self, c):
         scaled_M = []
