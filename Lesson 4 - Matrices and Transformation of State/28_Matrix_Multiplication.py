@@ -62,3 +62,68 @@ if not ANS == Matrix([[37, 72, 33],
     print('test case 5 failed\n')
 else:
     print('test case 5 passed\n')
+
+# test case 6
+A = Matrix([[5, 3, 1],
+            [6, 2, 7]])
+B = Matrix([[4, 2],
+            [8, 1],
+            [7, 4]])
+ANS = Matrix([[51, 17],
+              [89, 42]])
+RESULT = A.matrix_mult(B)
+print(RESULT)
+if not ANS == RESULT:
+    print('test case 6 failed\n')
+else:
+    print('test case 6 passed\n')
+
+# test case 7
+A = Matrix([[5]])
+B = Matrix([[4]])
+ANS = Matrix([[20]])
+RESULT = A.matrix_mult(B)
+print(RESULT)
+if not ANS == RESULT:
+    print('test case 7 failed\n')
+else:
+    print('test case 7 passed\n')
+
+# test case 8
+A = Matrix([[2, 8, 1, 2, 9],
+            [7, 9, 1, 10, 5],
+            [8, 4, 11, 98, 2],
+            [5, 5, 4, 4, 1]])
+B = Matrix([[4],
+            [2],
+            [17],
+            [80],
+            [2]])
+ANS = Matrix([[219], [873], [8071], [420]])
+RESULT = A.matrix_mult(B)
+print(RESULT)
+if not ANS == RESULT:
+    print('test case 8 failed\n')
+else:
+    print('test case 8 passed\n')
+
+# test case 9
+A = Matrix([[2, 8, 1, 2, 9],
+            [7, 9, 1, 10, 5],
+            [8, 4, 11, 98, 2],
+            [5, 5, 4, 4, 1]])
+B = Matrix([[4, 1, 2],
+            [2, 3, 1],
+            [17, 8, 1],
+            [1, 3, 0],
+            [2, 1, 4]])
+ANS = Matrix([[61, 49, 49],
+              [83, 77, 44],
+              [329, 404, 39],
+              [104, 65, 23]])
+RESULT = A.matrix_mult(B)
+print(RESULT)
+if not ANS == RESULT:
+    print('test case 9 failed\n')
+else:
+    print('test case 9 passed\n')
