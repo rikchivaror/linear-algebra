@@ -8,7 +8,6 @@ class Matrix(object):
     NUMBER_OF_A_COLS_AND_B_ROWS_DIFFERENT_MSG = 'Number of columns in A not equal to number of columns in matrix B'
 
     def __init__(self, M):
-
         try:
             d = len(M[0])
             for v in M:
@@ -38,7 +37,6 @@ class Matrix(object):
         return Matrix(transp_M)
 
     def matrix_mult(self, M):
-
         try:
             assert self.n_dim == M.m_dim        # check that that n-dimension of 'self' is equal to m-dimension of 'M'
 
@@ -69,14 +67,14 @@ class Matrix(object):
         return Matrix(scaled_M)
 
     def matrix_addition(self, M):
-        matrix_sum = []
-        row = []
-
         try:
             assert self.n_dim == M.n_dim and self.m_dim == M.m_dim
 
         except AssertionError:
             raise Exception(self.MATRICES_MUST_BE_THE_SAME_SIZE_MSG)
+
+        matrix_sum = []
+        row = []
 
         for i in range(self.m_dim):
             for j in range(self.n_dim):
