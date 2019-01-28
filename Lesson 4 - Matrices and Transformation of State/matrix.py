@@ -7,18 +7,36 @@ class Matrix(object):
     MATRICES_MUST_BE_THE_SAME_SIZE_MSG = 'Both matrices must have the same dimension'
     NUMBER_OF_A_COLS_AND_B_ROWS_DIFFERENT_MSG = 'Number of columns in A not equal to number of columns in matrix B'
 
-    def __init__(self, M):
-        try:
-            d = len(M[0])
-            for v in M:
-                assert len(v) == d
+    def __init__(self, M=[[]], size=0):
+        if type(M) == list:
+            try:
+                d = len(M[0])
+                for v in M:
+                    assert len(v) == d
 
-            self.matrix = M
-            self.n_dim = d
-            self.m_dim = len(M)
+                self.matrix = M
+                self.n_dim = d
+                self.m_dim = len(M)
 
-        except AssertionError:
-            raise Exception(self.ALL_VECTORS_MUST_BE_IN_SAME_DIM_MSG)
+            except AssertionError:
+                raise Exception(self.ALL_VECTORS_MUST_BE_IN_SAME_DIM_MSG)
+        else:
+            self.matrix = []
+            self.n_dim, self.m_dim = [size] * 2
+
+            for i in range(size):
+                self.matrix.append([])
+
+                for j in range(size):
+                    if M == 'I':
+                        if i == j:
+                            element = 1
+                        else:
+                            element = 0
+                    else:
+                        element = M
+
+                    self.matrix[i].append(element)
 
     def get_column(self, k):
         column = []
@@ -123,18 +141,15 @@ class Matrix(object):
 
 
 def test():
-    A = Matrix([[17, 25, 6, 2],
-                [6, 1, 97, 4],
-                [80, 8, 54, 15]
-                ])
 
-    B = Matrix([[3, 14, 1, 7, 42, 5],
-                [32, 11, 2, 4, 18, 17],
-                [19, 81, 4, 8, 5, 10],
-                [27, 2, 3, 6, 7, 3]
-                ])
+    A = Matrix()
+    B = Matrix([[1, 7, 2],
+                [2, 6, 3],
+                [3, 1, 1],
+                [1, 20, 1],
+                [7, 4, 16]])
 
-    print(A.matrix_mult(B))
+    print(A)
 
 
 if __name__ == '__main__':
