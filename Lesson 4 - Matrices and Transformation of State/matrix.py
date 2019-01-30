@@ -7,7 +7,7 @@ class Matrix(object):
     MATRICES_MUST_BE_THE_SAME_SIZE_MSG = 'Both matrices must have the same dimension'
     NUMBER_OF_A_COLS_AND_B_ROWS_DIFFERENT_MSG = 'Number of columns in A not equal to number of columns in matrix B'
 
-    def __init__(self, M=[[]], size=0):
+    def __init__(self, M=None, size=0):
         if type(M) == list:
             try:
                 d = len(M[0])
@@ -37,6 +37,9 @@ class Matrix(object):
                         element = M
 
                     self.matrix[i].append(element)
+
+    def determinant(self):
+        pass
 
     def get_column(self, k):
         column = []
@@ -85,12 +88,7 @@ class Matrix(object):
         return Matrix(scaled_M)
 
     def matrix_addition(self, M):
-        try:
-            assert self.n_dim == M.n_dim and self.m_dim == M.m_dim
-
-        except AssertionError:
-            raise Exception(self.MATRICES_MUST_BE_THE_SAME_SIZE_MSG)
-
+        self.test_same_size(M)
         matrix_sum = []
         row = []
 
@@ -142,12 +140,7 @@ class Matrix(object):
 
 def test():
 
-    A = Matrix()
-    B = Matrix([[1, 7, 2],
-                [2, 6, 3],
-                [3, 1, 1],
-                [1, 20, 1],
-                [7, 4, 16]])
+    A = Matrix(5, 0)
 
     print(A)
 
