@@ -8,19 +8,7 @@ class Matrix(object):
     NUMBER_OF_A_COLS_AND_B_ROWS_DIFFERENT_MSG = 'Number of columns in A not equal to number of columns in matrix B'
 
     def __init__(self, M=None, size=0):
-        if type(M) == list:
-            try:
-                d = len(M[0])
-                for v in M:
-                    assert len(v) == d
-
-                self.matrix = M
-                self.n_dim = d
-                self.m_dim = len(M)
-
-            except AssertionError:
-                raise Exception(self.ALL_VECTORS_MUST_BE_IN_SAME_DIM_MSG)
-        else:
+        if M == 'I':
             self.matrix = []
             self.n_dim, self.m_dim = [size] * 2
 
@@ -37,6 +25,18 @@ class Matrix(object):
                         element = M
 
                     self.matrix[i].append(element)
+        else:
+            try:
+                d = len(M[0])
+                for v in M:
+                    assert len(v) == d
+
+                self.matrix = M
+                self.n_dim = d
+                self.m_dim = len(M)
+
+            except AssertionError:
+                raise Exception(self.ALL_VECTORS_MUST_BE_IN_SAME_DIM_MSG)
 
     def determinant(self):
         pass
