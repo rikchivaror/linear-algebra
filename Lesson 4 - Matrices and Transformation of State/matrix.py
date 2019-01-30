@@ -7,6 +7,7 @@ class Matrix(object):
     MATRICES_MUST_BE_THE_SAME_SIZE_MSG = 'Both matrices must have the same dimension'
     NUMBER_OF_A_COLS_AND_B_ROWS_DIFFERENT_MSG = 'Number of columns in A not equal to number of columns in matrix B'
     MATRIX_MUST_BE_SQUARE = 'The matrix must be square to perform the operation'
+    NOT_INVERTIBLE = 'The matrix is not invertible since det(A) = 0'
 
     def __init__(self, M=None, size=0):
         self.square = False
@@ -44,9 +45,19 @@ class Matrix(object):
             except AssertionError:
                 raise Exception(self.ALL_VECTORS_MUST_BE_IN_SAME_DIM_MSG)
 
+    def inverse(self):
+        self.is_square()
+        det, ref_M = self.determinant()
+
+        try:
+            assert det != 0
+        except AssertionError:
+            Exception(self.NOT_INVERTIBLE)
+
+        return ref_M.rref(Matrix('I', self.n_dim))
+
     def determinant(self):
         self.is_square()
-
         det = 0
         ref_M = self.ref()
 
@@ -55,7 +66,10 @@ class Matrix(object):
 
         return det, ref_M
 
-    def ref(self):
+    def ref(self):      # TODO: implement this method
+        pass
+
+    def rref(self):     # TODO: implement this method
         pass
 
     def is_square(self):
