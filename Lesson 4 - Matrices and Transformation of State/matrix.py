@@ -31,19 +31,20 @@ class Matrix(object):
 
                     self.matrix[i].append(element)
         else:
+            d = len(M[0])
+
             try:
-                d = len(M[0])
                 for v in M:
                     assert len(v) == d
 
-                self.matrix = M
-                self.n_dim = d
-                self.m_dim = len(M)
-                if self.n_dim == self.m_dim:
-                    self.square = True
-
             except AssertionError:
                 raise Exception(self.ALL_VECTORS_MUST_BE_IN_SAME_DIM_MSG)
+
+            self.matrix = M
+            self.n_dim = d
+            self.m_dim = len(M)
+            if self.n_dim == self.m_dim:
+                self.square = True
 
     def inverse(self):
         self.is_square()
@@ -51,10 +52,12 @@ class Matrix(object):
 
         try:
             assert det != 0
+
         except AssertionError:
             Exception(self.NOT_INVERTIBLE)
 
-        return ref_M.rref(Matrix('I', self.n_dim))
+        rref = ref_M.rref(Matrix('I', self.n_dim))
+        return rref.get_right_block()
 
     def determinant(self):
         self.is_square()
@@ -69,7 +72,10 @@ class Matrix(object):
     def ref(self):      # TODO: implement this method
         pass
 
-    def rref(self):     # TODO: implement this method
+    def rref(self, B):     # TODO: implement this method
+        pass
+
+    def get_right_block(self):
         pass
 
     def is_square(self):
