@@ -12,7 +12,22 @@ class Matrix(object):
     def __init__(self, M=None, size=0):
         self.square = False
 
-        if M == 'I':
+        if type(M) == list:
+            d = len(M[0])
+
+            try:
+                for v in M:
+                    assert len(v) == d
+
+            except AssertionError:
+                raise Exception(self.ALL_VECTORS_MUST_BE_IN_SAME_DIM_MSG)
+
+            self.matrix = M
+            self.n_dim = d
+            self.m_dim = len(M)
+            if self.n_dim == self.m_dim:
+                self.square = True
+        else:
             self.matrix = []
             self.n_dim, self.m_dim = [size] * 2
             self.square = True
@@ -30,21 +45,6 @@ class Matrix(object):
                         element = M
 
                     self.matrix[i].append(element)
-        else:
-            d = len(M[0])
-
-            try:
-                for v in M:
-                    assert len(v) == d
-
-            except AssertionError:
-                raise Exception(self.ALL_VECTORS_MUST_BE_IN_SAME_DIM_MSG)
-
-            self.matrix = M
-            self.n_dim = d
-            self.m_dim = len(M)
-            if self.n_dim == self.m_dim:
-                self.square = True
 
     def inverse(self):
         self.is_square()
