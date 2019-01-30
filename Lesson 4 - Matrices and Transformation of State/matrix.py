@@ -6,11 +6,15 @@ class Matrix(object):
     ALL_VECTORS_MUST_BE_IN_SAME_DIM_MSG = 'All rows should have the same dimension'
     MATRICES_MUST_BE_THE_SAME_SIZE_MSG = 'Both matrices must have the same dimension'
     NUMBER_OF_A_COLS_AND_B_ROWS_DIFFERENT_MSG = 'Number of columns in A not equal to number of columns in matrix B'
+    MATRIX_MUST_BE_SQUARE = 'The matrix must be square to perform the operation'
 
     def __init__(self, M=None, size=0):
+        self.square = False
+
         if M == 'I':
             self.matrix = []
             self.n_dim, self.m_dim = [size] * 2
+            self.square = True
 
             for i in range(size):
                 self.matrix.append([])
@@ -34,12 +38,32 @@ class Matrix(object):
                 self.matrix = M
                 self.n_dim = d
                 self.m_dim = len(M)
+                if self.n_dim == self.m_dim:
+                    self.square = True
 
             except AssertionError:
                 raise Exception(self.ALL_VECTORS_MUST_BE_IN_SAME_DIM_MSG)
 
     def determinant(self):
+        self.is_square()
+
+        det = 0
+        ref_M = self.ref()
+
+        for i in range(self.n_dim):
+            det += ref_M.matrix[i][i]
+
+        return det, ref_M
+
+    def ref(self):
         pass
+
+    def is_square(self):
+        try:
+            assert self.square
+
+        except AssertionError:
+            raise Exception(self.MATRIX_MUST_BE_SQUARE)
 
     def get_column(self, k):
         column = []
