@@ -44,7 +44,7 @@ class Matrix(object):
                     else:
                         element = M
 
-                    self.matrix[i].append(element)
+                    self[i].append(element)
 
     def inverse(self):
         self.is_square()
@@ -65,7 +65,7 @@ class Matrix(object):
         ref_M = self.ref(B)
 
         for i in range(self.m_dim):
-            det += ref_M.matrix[i][i]
+            det += ref_M[i, i]
 
         return det, ref_M
 
@@ -90,7 +90,7 @@ class Matrix(object):
         column = []
 
         for i in range(self.m_dim):
-            column.append(self.matrix[i][k])
+            column.append(self[i, k])
 
         return column
 
@@ -113,11 +113,11 @@ class Matrix(object):
         M_t = M.transpose()
 
         for i in range(self.m_dim):             # for each row in 'self' matrix put that row into a vector object
-            row_1 = Vector(self.matrix[i])
+            row_1 = Vector(self[i])
             new_M.append([])
 
             for j in range(M.n_dim):                        # multiply each row of the 'self' matrix with each row of
-                row_2 = Vector(M_t.matrix[j])               # the transposed 'M' matrix
+                row_2 = Vector(M_t[j])               # the transposed 'M' matrix
                 new_M[i].append(row_1.dot_product(row_2))   # place the result into position i,j of the new matrix
 
         return Matrix(new_M)
@@ -127,8 +127,9 @@ class Matrix(object):
 
         for i in range(self.m_dim):
             scaled_M.append([])
+
             for j in range(self.n_dim):
-                scaled_M[i].append(c * self.matrix[i][j])
+                scaled_M[i].append(c * self[i, j])
 
         return Matrix(scaled_M)
 
@@ -139,7 +140,8 @@ class Matrix(object):
 
         for i in range(self.m_dim):
             for j in range(self.n_dim):
-                row.append(self.matrix[i][j] + M.matrix[i][j])
+                row.append(self[i, j] + M[i, j])
+
             matrix_sum.append(row)
             row = []
 
@@ -157,7 +159,7 @@ class Matrix(object):
             return False
 
         for i in range(self.m_dim):
-            if self.matrix[i] != M.matrix[i]:
+            if self[i] != M[i]:
                 return False
 
         return True
@@ -168,7 +170,7 @@ class Matrix(object):
         max_col_length = [0] * self.n_dim
 
         for i in range(self.m_dim):                         # determine space requirements for each matrix column
-            for j, e in enumerate(self.matrix[i]):
+            for j, e in enumerate(self[i]):
                 int_length = str(float(e)).index('.')
                 col_length = int_length + precision + 3     # constant '3' takes into account two empty spaces to the
                 if col_length > max_col_length[j]:          # left of the number and the space occupied by the decimal
@@ -176,19 +178,25 @@ class Matrix(object):
 
         for i in range(self.m_dim):                         # print the matrix and format each element so that all
             ret += '['                                      # elements in a column are right justified with each other
-            for j, e in enumerate(self.matrix[i]):
+            for j, e in enumerate(self[i]):
                 ret += '{0:{width}.{prec}f}'.format(e, width=max_col_length[j], prec=precision)
             ret += '  ]\n'
 
         return ret
 
+    def __getitem__(self, pos):
+        if type(pos) == tuple:
+            i, j = pos
+            return self.matrix[i][j]
+        else:
+            return self.matrix[pos]
 
 def test():
 
-    A = Matrix(5, 0)
+    A = Matrix(5, 5)
 
     print(A)
-
+    print(A[3, 3])
 
 if __name__ == '__main__':
     test()
