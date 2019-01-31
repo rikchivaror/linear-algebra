@@ -7,7 +7,7 @@ class Matrix(object):
     MATRICES_MUST_BE_THE_SAME_SIZE_MSG = 'Both matrices must have the same dimension'
     NUMBER_OF_A_COLS_AND_B_ROWS_DIFFERENT_MSG = 'Number of columns in A not equal to number of columns in matrix B'
     MATRIX_MUST_BE_SQUARE = 'The matrix must be square to perform the operation'
-    NOT_INVERTIBLE = 'The matrix is not invertible since det(A) = 0'
+    MATRIX_NOT_INVERTIBLE = 'The matrix is not invertible since det(A) = 0'
 
     def __init__(self, M=None, size=0):
         self.square = False
@@ -48,31 +48,32 @@ class Matrix(object):
 
     def inverse(self):
         self.is_square()
-        det, ref_M = self.determinant()
+        det, ref_M = self.determinant(Matrix('I', self.n_dim))
 
         try:
             assert det != 0
 
         except AssertionError:
-            Exception(self.NOT_INVERTIBLE)
+            Exception(self.MATRIX_NOT_INVERTIBLE)
 
-        rref = ref_M.rref(Matrix('I', self.n_dim))
+        rref = ref_M.rref()
         return rref.get_right_block()
 
-    def determinant(self):
+    def determinant(self, B=None):
         self.is_square()
         det = 0
-        ref_M = self.ref()
+        ref_M = self.ref(B)
 
-        for i in range(self.n_dim):
+        for i in range(self.m_dim):
             det += ref_M.matrix[i][i]
 
         return det, ref_M
 
-    def ref(self):      # TODO: implement this method
+    def ref(self, B):       # TODO: implement this method
+        # append Matrix B to right side of Matrix A
         pass
 
-    def rref(self, B):     # TODO: implement this method
+    def rref(self):         # TODO: implement this method
         pass
 
     def get_right_block(self):
