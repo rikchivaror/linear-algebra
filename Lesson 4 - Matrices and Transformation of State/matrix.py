@@ -1,4 +1,7 @@
+from decimal import Decimal, getcontext
 from vector import Vector
+
+getcontext().prec = 30
 
 
 class Matrix(object):
@@ -75,6 +78,18 @@ class Matrix(object):
     def get_rref(self, ANS):         # TODO: implement this method
         # return 'self' and 'ANS'
         pass
+
+    def get_row_pivot(self):
+        num_rows = self.m_dim
+        indices = [-1] * num_rows
+
+        for i, row in enumerate(self.matrix):
+            for j, e in enumerate(row):
+                if not MyDecimal(e).is_near_zero():
+                    indices[i] = j
+                    break
+
+        return indices
 
     def is_square(self):
         try:
@@ -188,13 +203,23 @@ class Matrix(object):
         else:
             return self.matrix[pos]
 
+
+class MyDecimal(Decimal):
+    def is_near_zero(self, eps=1e-10):
+        return abs(self) < eps
+
+
 def test():
 
-    A = Matrix(5, 5)
-    B = Matrix(5, 5)
+    # test get_row_pivot()
+    A = Matrix([[1, 4, 3, 2],
+                [0, 2, 1, 2],
+                [0, 0, 2, 3],
+                [0, 2, 2, 3],
+                [0,0,0,0]])
 
-    print(A.test_same_size(B))
-    print(A[3, 3])
+
+    print(A.get_row_pivot())
 
 if __name__ == '__main__':
     test()
