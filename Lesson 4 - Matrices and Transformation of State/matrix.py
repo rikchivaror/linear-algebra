@@ -46,9 +46,9 @@ class Matrix(object):
 
                     self[i].append(element)
 
-    def inverse(self):
+    def get_inverse(self):
         self.is_square()
-        det, ref_M = self.determinant(Matrix('I', self.n_dim))
+        det, ref_M, right_side_M = self.get_determinant(Matrix('I', self.n_dim))
 
         try:
             assert det != 0
@@ -56,27 +56,24 @@ class Matrix(object):
         except AssertionError:
             Exception(self.MATRIX_NOT_INVERTIBLE)
 
-        rref = ref_M.rref()
-        return rref.get_right_block()
+        return ref_M.get_rref(right_side_M)[1]
 
-    def determinant(self, B=None):
+    def get_determinant(self, right_side_M=None):
         self.is_square()
         det = 0
-        ref_M = self.ref(B)
+        ref_M, right_side_M = self.get_ref(right_side_M)
 
         for i in range(self.m_dim):
             det += ref_M[i, i]
 
-        return det, ref_M
+        return det, ref_M, right_side_M
 
-    def ref(self, B):       # TODO: implement this method
-        # append Matrix B to right side of Matrix A
+    def get_ref(self, right_side_M):       # TODO: implement this method
+        # return 'self' and 'right_side_M'
         pass
 
-    def rref(self):         # TODO: implement this method
-        pass
-
-    def get_right_block(self):
+    def get_rref(self, ANS):         # TODO: implement this method
+        # return 'self' and 'ANS'
         pass
 
     def is_square(self):
@@ -149,7 +146,7 @@ class Matrix(object):
 
     def test_same_size(self, M):
         try:
-            assert self.n_dim == M.n_dim and self.m_dim == M.m_dim
+            assert (self.n_dim, self.m_dim) == (M.n_dim, M.m_dim)
 
         except AssertionError:
             raise Exception(self.MATRICES_MUST_BE_THE_SAME_SIZE_MSG)
@@ -194,8 +191,9 @@ class Matrix(object):
 def test():
 
     A = Matrix(5, 5)
+    B = Matrix(5, 5)
 
-    print(A)
+    print(A.test_same_size(B))
     print(A[3, 3])
 
 if __name__ == '__main__':
