@@ -11,6 +11,7 @@ class Matrix(object):
     NUMBER_OF_A_COLS_AND_B_ROWS_DIFFERENT_MSG = 'Number of columns in A not equal to number of columns in matrix B'
     MATRIX_MUST_BE_SQUARE = 'The matrix must be square to perform the operation'
     MATRIX_NOT_INVERTIBLE = 'The matrix is not invertible since det(A) = 0'
+    ALL_ROWS_MUST_BE_IN_SAME_DIM_MSG = 'All rows should have the same length'
 
     def __init__(self, M=None, size=0):
         self.square = False
@@ -78,6 +79,9 @@ class Matrix(object):
     def get_rref(self, ANS):         # TODO: implement this method
         # return 'self' and 'ANS'
         pass
+
+    def swap_rows(self, row1, row2):
+        self[row1], self[row2] = self[row2], self[row1]
 
     def get_row_pivot(self):
         num_rows = self.m_dim
@@ -203,6 +207,13 @@ class Matrix(object):
         else:
             return self.matrix[pos]
 
+    def __setitem__(self, i, x):
+        try:
+            assert self.n_dim == len(x)
+            self.matrix[i] = x
+
+        except AssertionError:
+            raise Exception(self.ALL_ROWS_MUST_BE_IN_SAME_DIM_MSG)
 
 class MyDecimal(Decimal):
     def is_near_zero(self, eps=1e-10):
@@ -220,6 +231,15 @@ def test():
 
 
     print(A.get_row_pivot())
+    print()
+
+    # test __setitem__()
+    A[2] = [3, 3, 3, 3]
+    print(A)
+
+    # test swap_rows()
+    A.swap_rows(2, 4)
+    print(A)
 
 if __name__ == '__main__':
     test()
