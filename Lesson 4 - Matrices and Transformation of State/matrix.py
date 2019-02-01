@@ -83,6 +83,10 @@ class Matrix(object):
     def swap_rows(self, row1, row2):
         self[row1], self[row2] = self[row2], self[row1]
 
+    def scale_row(self, factor, row):
+        scaled_row = Matrix([self[row]]).scalar_mult(factor)
+        self[row] = scaled_row[0]
+
     def get_row_pivot(self):
         num_rows = self.m_dim
         indices = [-1] * num_rows
@@ -239,6 +243,10 @@ def test():
 
     # test swap_rows()
     A.swap_rows(2, 4)
+    print(A)
+
+    # test scale_row()
+    A.scale_row(3, 1)
     print(A)
 
 if __name__ == '__main__':
