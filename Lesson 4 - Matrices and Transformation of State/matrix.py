@@ -1,5 +1,6 @@
 from decimal import Decimal, getcontext
 from vector import Vector
+from copy import deepcopy
 
 getcontext().prec = 30
 
@@ -64,28 +65,57 @@ class Matrix(object):
 
     def get_determinant(self, right_side_M=None):
         self.is_square()
-        det = 0
+        det = 1
         ref_M, right_side_M = self.get_ref(right_side_M)
 
         for i in range(self.m_dim):
-            det += ref_M[i, i]
+            det *= ref_M[i, i]
 
         return det, ref_M, right_side_M
 
-    def get_ref(self, right_side_M):       # TODO: implement this method
-        # return 'self' and 'right_side_M'
-        pass
+    def get_ref(self, right_side_M):
+        left_side_M = deepcopy(self)
 
-    def get_rref(self, ANS):         # TODO: implement this method
+        for i in range(left_side_M.m_dim-1):
+            pivot_indices = left_side_M.get_row_pivot()         # find next row below row_i with the lowest
+            sub_pivot_indices = pivot_indices[i+1:]             # index containing the first pivot term
+            smallest_pivot_i = min(sub_pivot_indices)
+
+            if smallest_pivot_i < pivot_indices[i]:             # swap row i with row that has the smallest pivot index
+                row_to_swap = sub_pivot_indices.index(smallest_pivot_i) + i + 1
+                left_side_M.swap_rows(i, row_to_swap)
+
+                if right_side_M:
+                    right_side_M.swap_rows(i, row_to_swap)
+
+            for j in range(i+1, left_side_M.m_dim):
+                pivot_indices = left_side_M.get_row_pivot()     # update the pivot indices of each row in matrix
+
+                if pivot_indices[i] == pivot_indices[j]:                    # if the FNZT index of the row_j
+                    numerator = left_side_M.matrix[j][pivot_indices[j]]     # matches the FNZT index of the
+                    denominator = left_side_M.matrix[i][pivot_indices[i]]   # current row then multiply coefficient
+                    beta = (-1) * numerator / denominator                   # with row_i, add that to row_j and
+                    left_side_M.add_scaled_row_to_row(beta, i, j)           # replace row_j with result
+
+                    if right_side_M:
+                        right_side_M.add_scaled_row_to_row(beta, i, j)
+
+        return left_side_M, right_side_M
+
+    def get_rref(self, ref_M=None):         # TODO: implement this method
         # return 'self' and 'ANS'
         pass
 
-    def swap_rows(self, row1, row2):
-        self[row1], self[row2] = self[row2], self[row1]
+    def swap_rows(self, row_i, row_j):
+        self[row_i], self[row_j] = self[row_j], self[row_i]
 
-    def scale_row(self, factor, row):
-        scaled_row = Matrix([self[row]]).scalar_mult(factor)
-        self[row] = scaled_row[0]
+    def scale_row(self, factor, row_i):
+        scaled_row = Matrix([self[row_i]]).scalar_mult(factor)
+        self[row_i] = scaled_row[0]
+
+    def add_scaled_row_to_row(self, factor, row_s, row_t):
+        new_row = Vector(self[row_s]).scalar_mult(factor) + Vector(self[row_t])
+        self[row_t] = list(new_row.coordinates)
 
     def get_row_pivot(self):
         num_rows = self.m_dim
@@ -226,28 +256,104 @@ class MyDecimal(Decimal):
 
 def test():
 
-    # test get_row_pivot()
-    A = Matrix([[1, 4, 3, 2],
-                [0, 2, 1, 2],
-                [0, 0, 2, 3],
-                [0, 2, 2, 3],
-                [0,0,0,0]])
+    # # test get_row_pivot()
+    # A = Matrix([[1, 4, 3, 2],
+    #             [0, 2, 1, 2],
+    #             [0, 0, 2, 3],
+    #             [0, 2, 2, 3],
+    #             [0, 0, 0, 0]])
+    #
+    #
+    # print(A.get_row_pivot())
+    # print()
+    #
+    # # test __setitem__()
+    # A[2] = [3, 3, 3, 3]
+    # print(A)
+    #
+    # # test __getitem__()
+    # print(A[2, 2])
+    #
+    # # test swap_rows()
+    # A.swap_rows(2, 4)
+    # print(A)
+    #
+    # # test scale_row()
+    # A.scale_row(3, 1)
+    # print(A)
+    #
+    # # test add_scaled_row_to_row()
+    # A.add_scaled_row_to_row(2, 0, 2)
+    # print(A)
+    #
+    # # test get_ref(), test case 1
+    # A = Matrix([[0, 1, 1],
+    #             [1, -1, 1],
+    #             [1, 2, -5]
+    #             ])
+    #
+    # B = Matrix([[1],
+    #             [2],
+    #             [3]
+    #             ])
+    #
+    # A, B = A.get_ref(B)
+    # print(A)
+    # print(B)
+    #
+    # # test get_ref(), test case 2
+    # A = Matrix([[1, 1, 1],
+    #             [0, 1, 0],
+    #             [1, 1, -1],
+    #             [1, 0, -2]
+    #             ])
+    #
+    # B = Matrix([[1],
+    #             [2],
+    #             [3],
+    #             [2]
+    #             ])
+    #
+    # A, B = A.get_ref(B)
+    # print(A)
+    # print(B)
+    #
+    # # test get_ref(), test case 3
+    # A = Matrix([[1, 6, 5],
+    #             [3, 1, 1],
+    #             [2, 1, 2],
+    #             ])
+    #
+    # B = Matrix('I', 3)
+    #
+    # A, B = A.get_ref(B)
+    # print(A)
+    # print(B)
+    #
+    # # test get_determinant(), test case 1
+    # A = Matrix([[1, 6, 5],
+    #             [3, 1, 1],
+    #             [2, 1, 2],
+    #             ])
+    #
+    # B = Matrix('I', 3)
+    #
+    # det, A, B = A.get_determinant(B)
+    # print(det)
+    # print(A)
+    # print(B)
 
+    # test get_determinant(), test case 2
+    A = Matrix([[1, 6, 5],
+                [3, 1, 1],
+                [2, 1, 2],
+                ])
 
-    print(A.get_row_pivot())
-    print()
-
-    # test __setitem__()
-    A[2] = [3, 3, 3, 3]
+    det, A, B = A.get_determinant()
+    print(det)
     print(A)
-
-    # test swap_rows()
-    A.swap_rows(2, 4)
-    print(A)
-
-    # test scale_row()
-    A.scale_row(3, 1)
-    print(A)
+    print(B)
 
 if __name__ == '__main__':
     test()
+
