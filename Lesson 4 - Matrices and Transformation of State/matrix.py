@@ -16,6 +16,7 @@ class Matrix(object):
 
     def __init__(self, M=None, size=0):
         self.square = False
+        self.is_ref = False
 
         if type(M) == list:
             d = len(M[0])
@@ -100,11 +101,41 @@ class Matrix(object):
                     if right_side_M:
                         right_side_M.add_scaled_row_to_row(beta, i, j)
 
+        left_side_M.is_ref = True
         return left_side_M, right_side_M
 
-    def get_rref(self, ref_M=None):         # TODO: implement this method
-        # return 'self' and 'ANS'
-        pass
+    def get_rref(self, right_side_M):         # TODO: implement this method
+        if not self.is_ref:
+            left_side_M, right_side_M = self.get_ref(right_side_M)
+        else:
+            left_side_M = deepcopy(self)
+
+        pivot_indices = left_side_M.get_row_pivot()
+
+        for row_i, pivot_i in enumerate(pivot_indices):      # 'row_i' indexes each row in the system of eq. referenced
+            pivot_term = left_side_M.matrix[row_i][pivot_i]   # by 'tf' for which row-reduction will be performed
+
+            if not (pivot_term == 1 or pivot_i == -1):
+                left_side_M.scale_row(1/pivot_term, row_i)
+                right_side_M.scale_row(1/pivot_term, row_i)
+
+            for term_i in range(left_side_M.m_dim):              # cycle through each non-zero term in 'row_i' and perform
+                term = left_side_M.matrix[row_i][term_i]      # row-reduction on terms that have an index greater than
+
+                if not (term and term_i > pivot_i):         # the pivot term
+                    continue
+
+                try:
+                    row_j = pivot_indices.index(term_i)      # 'row_j' is the index of the first row below 'row_i'
+
+                except ValueError:                          # that has a pivot term at the same index as 'term_i'
+                    continue
+
+                beta = (-1) * term / left_side_M.matrix[row_j][term_i]         # do row-reduction on target row: 'row_i'
+                left_side_M.add_scaled_row_to_row(beta, row_j, row_i)    # using 'row_j'
+                right_side_M.add_scaled_row_to_row(beta, row_j, row_i)
+
+        return left_side_M, right_side_M
 
     def swap_rows(self, row_i, row_j):
         self[row_i], self[row_j] = self[row_j], self[row_i]
@@ -249,6 +280,7 @@ class Matrix(object):
         except AssertionError:
             raise Exception(self.ALL_ROWS_MUST_BE_IN_SAME_DIM_MSG)
 
+
 class MyDecimal(Decimal):
     def is_near_zero(self, eps=1e-10):
         return abs(self) < eps
@@ -353,6 +385,14 @@ def test():
     print(det)
     print(A)
     print(B)
+
+
+    # test get_inverse(), test case 2
+    A = Matrix([[1, 6, 5],
+                [3, 1, 1],
+                [2, 1, 2],
+                ])
+    print(A.get_inverse())
 
 if __name__ == '__main__':
     test()
